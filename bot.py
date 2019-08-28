@@ -1,16 +1,20 @@
 import discord
 from discord.ext import commands
-from gameFiles import gameManager
+from game_manager import game_manager
+from charager_manager import character_manager
 from datetime import datetime
 import csv
 
-token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWXzRA.upQMPy5A0k_QZa1mkbmAbK8pUdI'
+token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWX0kQ.IXEBp06i94mgFKBuX9jVA3z38Iw'
 
 description = '''A town of salem knock off.'''
 
+
 bot = commands.Bot(command_prefix='!', description=description)
-gameManager = gameManager.GameManager(bot)
+gameManager = game_manager.GameManager(bot)
+charaterManager = character_manager.CharaterManager(bot)
 bot.add_cog(gameManager)
+bot.add_cog(charaterManager)
 
 @bot.event
 async def on_ready():
