@@ -5,7 +5,7 @@ from charager_manager import character_manager
 from datetime import datetime
 import csv
 
-token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWX5DA.xKKjCPtdVjEqGRewlAG5oJ0LK9o'
+token = 'NjE2MTIyMTQ3NDI4ODkyNzAz.XWX--g.4Rqtb6qdOjNFBcODSkNFjvJ9ZUw'
 
 description = '''A town of salem knock off.'''
 
@@ -28,7 +28,6 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
-
     global last_time
 
     if message.content.lower() == "f":

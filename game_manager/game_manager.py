@@ -46,16 +46,22 @@ class GameManager(commands.Cog):
     @commands.command()
     async def start(self, ctx, *args):
         """Starts the game."""
-        if len(self.players) < 6:
+        if len(self.players) < 1:
             message = "There are not enough players in the game. Please make more friends"
             await ctx.send(message)
         else:
             self.started = True
+            await ctx.message.guild.create_voice_channel("Some Channel")
             message = "The Game Has Started"
             await ctx.send(message)
 
 
-
+    @commands.command()
+    async def end(self, ctx, *args):
+        """Forces the game to end."""
+        self.started = False
+        message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
+        await ctx.send(message)
 
 
 
