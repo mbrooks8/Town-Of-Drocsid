@@ -4,27 +4,17 @@ from discord.ext import commands
 import random
 from stat_tracker import stat_tracker
 from datetime import datetime
-
 import csv
 
-
 # Test token: NTYzMDUxMTA2ODkzMDM3NTk4.XKTzBA.kCuGuv8Onok8NZZm1Q5TfPfrGAc
-token = 'NTYzMDUxMTA2ODkzMDM3NTk4.XKTzBA.kCuGuv8Onok8NZZm1Q5TfPfrGAc'
+# reaal token: NTU1MjkzNDUwNjg2NDMxMjQy.D2pFTQ.vN3rBsswoy5wlzyKapIeL_AAR44
+token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWXvbQ.Sf6zmrjWwUbL4NNv30AxRhGUrfA'
 
-description = '''An example bot to showcase the discord.ext.commands extension
-module.
-There are a number of utility commands being showcased here.'''
+description = '''A town of salem knock off.'''
 
-bot = commands.Bot(command_prefix='&', description=description)
-bot.add_cog(fanfic_seeker.FanficSeeker(bot))
-bot.add_cog(prompt_generator.PromptGenerator(bot))
+bot = commands.Bot(command_prefix='!', description=description)
 stat = stat_tracker.StatTracker(bot)
 bot.add_cog(stat)
-# bot.add_cog(Cleanup(bot))
-# USEABLE_CATS = ["💕 Sora & Kairi", "🔑 Kingdom Hearts"]
-users_counts = {}
-# MIN_TUMBLR_DELAY_MINUTES = 60
-last_time = datetime.utcnow()
 
 @bot.event
 async def on_ready():
@@ -34,9 +24,6 @@ async def on_ready():
     print('------')
 
 
-"""
-Press F to pay respects
-"""
 @bot.event
 async def on_message(message):
     if message.author.bot:
