@@ -5,7 +5,7 @@ from charager_manager import character_manager
 from datetime import datetime
 import csv
 
-token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWX0kQ.IXEBp06i94mgFKBuX9jVA3z38Iw'
+token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWX5DA.xKKjCPtdVjEqGRewlAG5oJ0LK9o'
 
 description = '''A town of salem knock off.'''
 

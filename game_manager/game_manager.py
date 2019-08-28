@@ -5,20 +5,54 @@ import time
 
 
 class GameManager(commands.Cog):
-    """Tracks the number of posts people make."""
+    """Manages the game."""
 
     def __init__(self, bot):
         self.bot = bot
+        self.started = False
+        self.players = {}
 
     @commands.command()
-    async def some_command(self, ctx, *args):
-        """Say some shit."""
-        message = "go fuck yourself"
-        await ctx.message.author.send(message)
+    async def join(self, ctx, *args):
+        """Lets Players Join The Game."""
+        if len(self.players) <= 15:
+            if ctx.message.author.name not in self.players:
+                self.players[ctx.message.author.name] = "something"
+                message = ctx.message.author.name, "has joined the game!"
+                await ctx.send(message)
+            else:
+                await ctx.send("You are already part of this game.")
+        else:
+            await ctx.send("There are already 15 players in this game.")
 
+    @commands.command()
+    async def leave(self, ctx, *args):
+        """Lets Players Leave The Game."""
+        if ctx.message.author.name in self.players:
+            message = ctx.message.author.name + "has left the game"
+            self.players.pop(ctx.message.author.name, None)
+            await ctx.send(message)
+        else:
+            await ctx.send("You are not part of this game.")
 
+    @commands.command()
+    async def players(self, ctx, *args):
+        """Lists the players."""
+        message = "```These are the players:\n"
+        for player in self.players:
+            message += player + "\n```"
+        await ctx.send(message)
 
-
+    @commands.command()
+    async def start(self, ctx, *args):
+        """Starts the game."""
+        if len(self.players) < 6:
+            message = "There are not enough players in the game. Please make more friends"
+            await ctx.send(message)
+        else:
+            self.started = True
+            message = "The Game Has Started"
+            await ctx.send(message)
 
 
 
