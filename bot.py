@@ -1,27 +1,19 @@
-import discord
 from discord.ext import commands
-from game_manager import game_manager
-from charager_manager import character_manager
-from datetime import datetime
-import csv
+from managers import GameManager
+from managers import CharaterManager
 
-token = 'NjE2MTIyMTQ3NDI4ODkyNzAz.XWYEVQ.hJoRXI6uDh0wfasAomF2yj6zIkw'
+from utils import logger
 
+# Initialize Bot
 description = '''A town of salem knock off.'''
-
-
 bot = commands.Bot(command_prefix='!', description=description)
-gameManager = game_manager.GameManager(bot)
-charaterManager = character_manager.CharaterManager(bot)
-bot.add_cog(gameManager)
-bot.add_cog(charaterManager)
 
 @bot.event
 async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
+    log.info('Logged in as')
+    log.info(bot.user.name)
+    log.info(bot.user.id)
+    log.info('------')
 
 
 @bot.event
@@ -41,8 +33,28 @@ async def on_message(message):
 async def on_voice_state_update(member, begin, end):
     if end.channel.name == "lobby":
         if(member.nick is not None):
-            print(str(member.nick)+" has joined the lobby");
+            log.info(str(member.nick)+" has joined the lobby");
         else:
-            print(str(member)+" has joined the lobby")
+            log.info(str(member)+" has joined the lobby")
 
-bot.run(token)
+
+def setup():
+    gameManager = GameManager(bot)
+    charaterManager = CharaterManager(bot)
+    bot.add_cog(gameManager)
+    bot.add_cog(charaterManager)
+
+
+if __name__ == "__main__":
+    # Initialize Logging
+    log = logger.setup_custom_logging("tod")
+    log.debug("Logging Setup")
+
+    # Run Bot
+    with open('secretkey.txt') as f:
+        token = str(f.read())
+    bot.run(token)
+    log.info("Bot Started...")
+
+    # Configure Bot Cogs
+    setup()

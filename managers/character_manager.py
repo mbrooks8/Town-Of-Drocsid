@@ -1,40 +1,28 @@
-import discord
+import logging
+
 from discord.ext import commands
-from datetime import datetime, timedelta
-import time
+from models import Character
+log = logging.getLogger('tod')
 
 
 class CharaterManager(commands.Cog):
     """Tracks the number of posts people make."""
     bot = commands.Bot(command_prefix='!')
-    print("character class made")
-    class character():
-        def __init__(self, name, role):
-            self.name = name
-            self.role = role
-            self.alive = alive
-        
-        def setName(self, name):
-            self.name = name
-        
-        def setRole(self, role):
-            self.role = role
-        
-        def setAlive(self, alive):
-            self.alive = alive
+    log.debug("character class made")
+    my_character = Character(1, 2, 3)
 
     def __init__(self, bot):
         self.bot = bot
 
-        
     @bot.event
     async def on_voice_state_update(member, begin, end):
         if end.channel.name == "lobby":
-            if(member.nick is not None):
-                print(str(member.nick)+" has joined the lobby");
+            if (member.nick is not None):
+                print(str(member.nick) + " has joined the lobby");
             else:
-                print(str(member)+" has joined the lobby")
-    
+                print(str(member) + " has joined the lobby")
+
+
 '''
 import discord
 
@@ -63,4 +51,3 @@ async def on_voice_state_update(member, begin, end):
 client.run(TOKEN)
 
 '''
-
