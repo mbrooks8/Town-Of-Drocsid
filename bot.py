@@ -5,7 +5,6 @@ from charager_manager import character_manager
 from datetime import datetime
 import csv
 
-token = 'NjE2MTIyMTQ3NDI4ODkyNzAz.XWYEVQ.hJoRXI6uDh0wfasAomF2yj6zIkw'
 
 description = '''A town of salem knock off.'''
 
@@ -22,6 +21,17 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+    lobbyName = "lobby"
+    for guild in bot.guilds:
+        makeChannel = True
+        for channel in guild.channels:
+            if lobbyName in str(channel):
+                print("Channel already exists")
+                makeChannel = False
+                break
+        if makeChannel is True:
+            await guild.create_voice_channel(lobbyName)
+            await guild.create_text_channel(lobbyName)
 
 
 @bot.event
