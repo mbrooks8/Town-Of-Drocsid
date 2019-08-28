@@ -74,7 +74,7 @@ class GameManager(commands.Cog):
                         theGameChannel = channel
 
                 for member in lobby.members:
-                    self.players[member] = "neutral"
+                    self.players[member.name] = "neutral"
                     await member.move_to(theGameChannel)
 
                 message = "The Game Has Started"
