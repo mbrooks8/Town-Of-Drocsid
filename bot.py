@@ -3,12 +3,11 @@ import datetime
 from discord.ext import commands
 import random
 from stat_tracker import stat_tracker
+from town_of_drocsid import town_of_drocsid
 from datetime import datetime
 import csv
 
-# Test token: NTYzMDUxMTA2ODkzMDM3NTk4.XKTzBA.kCuGuv8Onok8NZZm1Q5TfPfrGAc
-# reaal token: NTU1MjkzNDUwNjg2NDMxMjQy.D2pFTQ.vN3rBsswoy5wlzyKapIeL_AAR44
-token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWXvbQ.Sf6zmrjWwUbL4NNv30AxRhGUrfA'
+token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWXyRQ.0DCFBrwOqhkJTm3LhiuuqBYN0l0'
 
 description = '''A town of salem knock off.'''
 
