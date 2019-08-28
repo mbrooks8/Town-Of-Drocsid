@@ -14,6 +14,17 @@ async def on_ready():
     log.info(bot.user.name)
     log.info(bot.user.id)
     log.info('------')
+    lobbyName = "lobby"
+    for guild in bot.guilds:
+        makeChannel = True
+        for channel in guild.channels:
+            if lobbyName in str(channel):
+                print("Channel already exists")
+                makeChannel = False
+                break
+        if makeChannel is True:
+            await guild.create_voice_channel(lobbyName)
+            await guild.create_text_channel(lobbyName)
 
 
 @bot.event

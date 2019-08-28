@@ -12,18 +12,18 @@ class GameManager(commands.Cog):
         self.started = False
         self.players = {}
 
-    @commands.command()
-    async def join(self, ctx, *args):
-        """Lets Players Join The Game."""
-        if len(self.players) <= 15:
-            if ctx.message.author.name not in self.players:
-                self.players[ctx.message.author.name] = "something"
-                message = ctx.message.author.name, "has joined the game!"
-                await ctx.send(message)
-            else:
-                await ctx.send("You are already part of this game.")
-        else:
-            await ctx.send("There are already 15 players in this game.")
+    # @commands.command()
+    # async def join(self, ctx, *args):
+    #     """Lets Players Join The Game."""
+    #     if len(self.players) <= 15:
+    #         if ctx.message.author.name not in self.players:
+    #             self.players[ctx.message.author.name] = "something"
+    #             message = ctx.message.author.name, "has joined the game!"
+    #             await ctx.send(message)
+    #         else:
+    #             await ctx.send("You are already part of this game.")
+    #     else:
+    #         await ctx.send("There are already 15 players in this game.")
 
     @commands.command()
     async def leave(self, ctx, *args):
@@ -46,24 +46,68 @@ class GameManager(commands.Cog):
     @commands.command()
     async def start(self, ctx, *args):
         """Starts the game."""
-        if len(self.players) < 1:
-            message = "There are not enough players in the game. Please make more friends"
-            await ctx.send(message)
+        gameChannel = "Town Of Discord"
+        channel = ctx.message.author.voice.channel
+        print("The channel is:", str(channel))
+
+        if "lobby" in str(channel):
+            lobby = channel
+            if len(lobby.members) < 1:
+                message = "There are not enough players in the game. Please make more friends"
+                await ctx.send(message)
+
+            else:
+                self.started = True
+
+                makeChannel = True
+                for channel in ctx.guild.channels:
+                    if gameChannel in str(channel):
+                        makeChannel = False
+                        break
+
+                if makeChannel is True:
+                    await ctx.message.guild.create_voice_channel(gameChannel)
+                    await ctx.message.guild.create_text_channel(gameChannel)
+
+                for channel in ctx.message.guild.channels:
+                    if channel.name == gameChannel:
+                        theGameChannel = channel
+
+                for member in lobby.members:
+                    self.players[member.name] = "neutral"
+                    await member.move_to(theGameChannel)
+
+                message = "The Game Has Started"
+                await ctx.send(message)
+
         else:
-            self.started = True
-            await ctx.message.guild.create_voice_channel("Town Of Discord")
-            await ctx.message.guild.create_text_channel("Town Of Discord")
-            message = "The Game Has Started"
+            message = "You must be in the lobby to start the game"
             await ctx.send(message)
+
+
 
 
     @commands.command()
     async def end(self, ctx, *args):
         """Forces the game to end."""
         self.started = False
+        for channel in ctx.guild.channels:
+            if "discord" in str(channel).lower():
+                print(channel)
+                await channel.delete()
         message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
         await ctx.send(message)
 
 
+    @commands.command()
+    async def moveAll(self, ctx, *args):
+        """Moves everyone to channel."""
+        for channel in ctx.guild.channels:
+            if "lobby" in str(channel):
+                lobby = channel
+                break
+        for member in ctx.guild.members:
+            print("Moving user to lobby")
+            await member.move_to(lobby)
 
 
