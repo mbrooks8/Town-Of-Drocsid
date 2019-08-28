@@ -30,40 +30,7 @@ async def on_message(message):
         return
 
     global last_time
-    # if message.created_at - last_time > datetime.timedelta(minutes=MIN_TUMBLR_DELAY_MINUTES):
-    #     links = secret_parser.get_new_links(last_time)
-    #     for result in links:
-    #         await _send_link_to_channel(message, result)
-    #     last_time = message.created_at
 
-    if str(datetime.now().date()) == stat.resetDay:
-        print("It is reset day")
-
-        filename = "messageHistory" + str(datetime.now().date()) + ".txt"
-        print("Creating file:", filename)
-        f = open(filename, "w")
-        print("Saving message history into this file")
-        f.write(stat.messageDict)
-        f.close
-
-        stat.clear_historical_messages()
-        stat.resetDay = str(datetime.now().date() + timedelta(days=7))
-
-
-    if message.author.name in stat.messageDict:
-        stat.messageDict[message.author.name] += [{'message': message.content,
-                                                 'channel': message.channel.name,
-                                                 'date': str(datetime.now().date()),
-                                                 'time': str(datetime.now().time())}]
-        #print(stat.messageDict)
-    else:
-        stat.messageDict[message.author.name] = [{'message': message.content,
-                                                'channel': message.channel.name,
-                                                'date': str(datetime.now().date()),
-                                                'time': str(datetime.now().time())}]
-        #print(stat.messageDict)
-
-    #if datetime.now().time()
     if message.content.lower() == "f":
         if message.author.nick:
             await message.channel.send(message.author.nick + " has paid respect.")
