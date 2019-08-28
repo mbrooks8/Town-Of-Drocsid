@@ -1,19 +1,16 @@
 import discord
-import datetime
 from discord.ext import commands
-import random
-from stat_tracker import stat_tracker
-from town_of_drocsid import town_of_drocsid
+from gameFiles import gameManager
 from datetime import datetime
 import csv
 
-token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWXyRQ.0DCFBrwOqhkJTm3LhiuuqBYN0l0'
+token = 'NjE2MTA1OTY1NjAyOTk2MjQ0.XWXzRA.upQMPy5A0k_QZa1mkbmAbK8pUdI'
 
 description = '''A town of salem knock off.'''
 
 bot = commands.Bot(command_prefix='!', description=description)
-stat = stat_tracker.StatTracker(bot)
-bot.add_cog(stat)
+gameManager = gameManager.GameManager(bot)
+bot.add_cog(gameManager)
 
 @bot.event
 async def on_ready():
