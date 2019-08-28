@@ -5,7 +5,7 @@ from charager_manager import character_manager
 from datetime import datetime
 import csv
 
-token = 'NjE2MTIyMTQ3NDI4ODkyNzAz.XWX--g.4Rqtb6qdOjNFBcODSkNFjvJ9ZUw'
+token = 'NjE2MTIyMTQ3NDI4ODkyNzAz.XWYEVQ.hJoRXI6uDh0wfasAomF2yj6zIkw'
 
 description = '''A town of salem knock off.'''
 
@@ -37,5 +37,12 @@ async def on_message(message):
             await message.channel.send(message.author.name + " has paid respect.")
     await bot.process_commands(message)
 
+@bot.event 
+async def on_voice_state_update(member, begin, end):
+    if end.channel.name == "lobby":
+        if(member.nick is not None):
+            print(str(member.nick)+" has joined the lobby");
+        else:
+            print(str(member)+" has joined the lobby")
 
 bot.run(token)
