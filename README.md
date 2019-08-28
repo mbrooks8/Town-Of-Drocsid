@@ -2,7 +2,7 @@
 
 Cool Bot for Town Of Salem
 
-####Install Requirements:
+#### Install Requirements:
 ```
 pip install -r requirements.txt
 ```
