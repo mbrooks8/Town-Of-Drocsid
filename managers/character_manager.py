@@ -2,6 +2,7 @@ import logging
 from models import Character
 from models import Role
 import random
+import json
 log = logging.getLogger('tod')
 
 
@@ -10,19 +11,20 @@ class CharaterManager():
     log.debug("character class made")
 
     def getRoles(self, count):
+        with open('./models/roles.json', 'r') as f:
+            roles = json.load(f)
+        #print(roles.keys())
         if count < 1:
             return[]
         civilianCount = count - 2 - round(count/4)#removes the doctor and detective and the mafia members
         mafiaCount = round(count/4)
         detectiveCount = 1
         doctorCount = 1
-        
-        roles ={
-            "civilianCount":civilianCount,
-            "mafiaCount":mafiaCount,
-            "detectiveCount":detectiveCount,
-            "doctorCount":doctorCount
-            };
+        #update roles to store a usable Role class
+        roles["civilian"]["count"] = civilianCount
+        roles["mafia"]["count"] = mafiaCount
+        roles["doctor"]["count"] = doctorCount
+        roles["detective"]["count"] = detectiveCount
         return roles
     
     def initCharacters(self, memberList):
@@ -31,13 +33,21 @@ class CharaterManager():
         if roles is []:
             return False
         for member in memberList:
-            sample = random.sample(roles.items(), k=1)
-            print("test",sample[0][0])
+            sample = random.sample(roles.keys(), k=1)
+            print(sample)
+            key = sample[0]
+            roles[key]["count"] = roles[key]["count"] - 1 
+            self.players.append(Character(member, roles[key]))
+            message = "Welcome to Town of Discord! The game has started. You have the role of:"
+            message += str(roles[key])
+            print(message)
+            if roles[key]["count"] == 0:
+                del roles[key]
             alignment = 0 
             role = 0
-            self.players.append(Character(member, alignment, role))
-            message = "Welcome to Town of Discord! The game has started. You have the role of:\n"
-            message += str(role)
+            #todo update key to be the role
+        for player in self.players:
+            print(player)
             
         if len(memberList)%4 == 0:
             print("the ideal size")
