@@ -27,6 +27,7 @@ async def on_ready():
 
         makeRole = True
         for role in guild.roles:
+            #print(role)
             if "muted" in str(role):
                 print("Role already exists")
                 makeRole = False
@@ -75,7 +76,10 @@ async def on_voice_state_update(member, begin, end):
 
 
 def setup():
-    gameManager = GameManager(bot)
+    myGuild = ""
+    for guild in bot.guilds:
+        myGuild = guild
+    gameManager = GameManager(bot, myGuild)
     bot.add_cog(gameManager)
 
 

@@ -11,7 +11,8 @@ class GameManager(commands.Cog):
     #night -- 0
     #discussion & voting -- 1
     #Judgement -- 2
-    def __init__(self, bot):
+    def __init__(self, bot, guild):
+        self.guild = guild
         self.bot = bot
         self.started = False
         self.players = []
@@ -26,15 +27,20 @@ class GameManager(commands.Cog):
         #Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
         self.phase = (self.phase + 1)%3
         print("this is the phase", self.phase)
+        for role in self.guild.roles:
+            if "unmuted" in str(role):
+                unmuted = role
+            if "muted" in str(role):
+                muted = role
         if self.phase == 0:
             for member in self.players:
-                await member.add_roles("muted")
+                await member.add_roles(muted)
         if self.phase == 1:
             for member in self.players:
-                await member.add_roles("unmuted")
+                await member.add_roles(unmuted)
         if self.phase == 2:
             for member in self.players:
-                await member.add_roles("muted")
+                await member.add_roles(muted)
 
 
     @commands.command()
@@ -94,11 +100,14 @@ class GameManager(commands.Cog):
                     await member.move_to(theGameChannel)
 
                 self.characterManager.initCharacters(self.players)
+
                 for player in self.characterManager.players:
+                    print("sending message to :", player)
                     message = "Hello" + player.member.name + "Welcome to Town of Discord! The game has started. You have the role of:\n"
                     message += player.role + "\n"
                     message += player.alignment + "\n"
                     message += player.alive + "\n"
+                    await player.send(message)
 
                 message = "The Game Has Started"
                 
