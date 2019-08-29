@@ -1,20 +1,7 @@
 class Role(object):
-    def __init__(self):
-        self.roles ={
-            "civilian":{
-                "alignment":1,
-                "summary":"",
-                "abilities":"",
-                "attributes":"",
-                "goal":"",
-            },
-            "mafia":{
-                "alignment":-1,
-            },
-            "detective":{
-                "alignment":1,
-            },
-            "doctor":{
-                "alignment":1,
-            },
-        };
+    def __init__(self, alignment, summary, abilities, atributes, goal):
+        self.alignment = alignment
+        self.summary = summary
+        self.abilities = abilities
+        self.attributes = atributes
+        self.goal = goal
