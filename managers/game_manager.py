@@ -29,7 +29,10 @@ class GameManager(commands.Cog):
         """Lists the players."""
         message = "```These are the players:\n"
         for player in self.players:
-            message += player.name + "\n"
+            username = player.nick
+            if username is None:
+                username = player.name
+            message += username + "\n"
         message += "```"
         await ctx.send(message)
 
