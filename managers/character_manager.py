@@ -1,14 +1,11 @@
 import logging
-
-from discord.ext import commands
 from models import Character
 import random
 log = logging.getLogger('tod')
 
 
-class CharaterManager(commands.Cog):
+class CharaterManager():
     """Tracks the number of posts people make."""
-    bot = commands.Bot(command_prefix='!')
     log.debug("character class made")
 
     def getRoles(self, count):
@@ -24,11 +21,14 @@ class CharaterManager(commands.Cog):
             "detectiveCount":detectiveCount,
             "doctorCount":doctorCount
             };
+        print("count is: ",count)
         return roles
     
     def initCharacters(self, memberList):
+        print(memberList)
         players = []
         roles = self.getRoles(len(memberList))
+        print(roles)
         if roles is []:
             return False
         for member in memberList:
@@ -47,6 +47,3 @@ class CharaterManager(commands.Cog):
             print("you can still play, but the 3:1 ratio is off")
         return True
     
-    
-    def __init__(self, bot):
-        self.bot = bot

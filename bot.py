@@ -1,6 +1,5 @@
 from discord.ext import commands
 from managers import GameManager
-from managers import CharaterManager
 
 from utils import logger
 
@@ -59,9 +58,7 @@ async def on_voice_state_update(member, begin, end):
 
 def setup():
     gameManager = GameManager(bot)
-    charaterManager = CharaterManager(bot)
     bot.add_cog(gameManager)
-    bot.add_cog(charaterManager)
 
 
 if __name__ == "__main__":

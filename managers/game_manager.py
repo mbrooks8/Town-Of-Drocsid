@@ -1,4 +1,5 @@
 import discord
+from managers import character_manager 
 from discord.ext import commands
 from datetime import datetime, timedelta
 import time
@@ -11,6 +12,7 @@ class GameManager(commands.Cog):
         self.bot = bot
         self.started = False
         self.players = []
+        self.characterManager = character_manager.CharaterManager()
 
     @commands.command()
     async def leave(self, ctx, *args):
@@ -65,7 +67,9 @@ class GameManager(commands.Cog):
                     self.players.append(member)
                     await member.move_to(theGameChannel)
 
+                self.characterManager.initCharacters(self.players)
                 message = "The Game Has Started"
+                
                 await ctx.send(message)
 
         else:
