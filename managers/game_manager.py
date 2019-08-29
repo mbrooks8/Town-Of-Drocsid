@@ -10,7 +10,7 @@ class GameManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.started = False
-        self.players = {}
+        self.players = []
 
     # @commands.command()
     # async def join(self, ctx, *args):
@@ -40,7 +40,7 @@ class GameManager(commands.Cog):
         """Lists the players."""
         message = "```These are the players:\n"
         for player in self.players:
-            message += player + "\n```"
+            message += player.name + "\n```"
         await ctx.send(message)
 
     @commands.command()
@@ -74,7 +74,7 @@ class GameManager(commands.Cog):
                         theGameChannel = channel
 
                 for member in lobby.members:
-                    self.players[member.name] = "neutral"
+                    self.players.append(member)
                     await member.move_to(theGameChannel)
 
                 message = "The Game Has Started"
