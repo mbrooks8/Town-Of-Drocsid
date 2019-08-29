@@ -2,6 +2,7 @@ import logging
 
 from discord.ext import commands
 from models import Character
+import random
 log = logging.getLogger('tod')
 
 
@@ -9,45 +10,40 @@ class CharaterManager(commands.Cog):
     """Tracks the number of posts people make."""
     bot = commands.Bot(command_prefix='!')
     log.debug("character class made")
-    my_character = Character(1, 2, 3)
 
+    def getRoles(self, count):
+        if count < 4:
+            return[]
+        civilianCount = count - 2 - round(count/4)#removes the doctor and detective and the mafia members
+        mafiaCount = round(count/4)
+        detectiveCount = 1
+        doctorCount = 1
+        roles ={
+            "civilianCount":civilianCount,
+            "mafiaCount":mafiaCount,
+            "detectiveCount":detectiveCount,
+            "doctorCount":doctorCount
+            };
+        return roles
+    
+    def initCharacters(self, memberList):
+        players = []
+        roles = self.getRoles(len(memberList))
+        if roles is []:
+            return False
+        for member in memberList:
+            sample = random.sample(roles.items(), k=1)
+            print(sample)
+            alignment = 0 
+            role = 0
+            players.append(Character(member, alignment, role))
+            
+        if len(memberList)%4 == 0:
+            print("the ideal size")
+        else:
+            print("you can still play, but the 3:1 ratio is off")
+        return True
+    
+    
     def __init__(self, bot):
         self.bot = bot
-
-    @bot.event
-    async def on_voice_state_update(member, begin, end):
-        if end.channel.name == "lobby":
-            if (member.nick is not None):
-                print(str(member.nick) + " has joined the lobby");
-            else:
-                print(str(member) + " has joined the lobby")
-
-
-'''
-import discord
-
-TOKEN = 'NjE2MTIyMTQ3NDI4ODkyNzAz.XWX--g.4Rqtb6qdOjNFBcODSkNFjvJ9ZUw'
-
-client = discord.Client()
-
-@client.event
-async def on_message(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('!hello'):
-        msg = 'Hello {0.author.mention}'.format(message)
-        await client.send_message(message.channel, msg)
-
-@client.event
-async def on_voice_state_update(member, begin, end):
-    if end.channel.name == "lobby":
-        if(member.nick is not None):
-            print(str(member.nick)+" has joined the lobby");
-        else:
-            print(str(member)+" has joined the lobby")
-
-client.run(TOKEN)
-
-'''
