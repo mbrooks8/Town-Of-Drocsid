@@ -1,0 +1,30 @@
+{
+    "civilian": {
+      "alignment": "Town",
+      "summary": "Your a fuckin townie",
+      "abilities": "",
+      "attributes": "",
+      "goal": "Lynch every criminal and evildoer."
+    },
+    "doctor": {
+      "alignment": "Town",
+      "summary": "A surgeon skilled in trauma care who secretly heals people.",
+      "abilities": "Heal one person each night, preventing them from dying.",
+      "attributes": "You may only Heal yourself once.\nYou will know if your target is attacked.\nHealing will give a Powerful Defense.\n",
+      "goal": "Lynch every criminal and evildoer."
+    },
+    "detective": {
+      "alignment": "Town",
+      "summary": "A private eye who secretly gathers information.",
+      "abilities": "Investigate one person each night for a clue to their role.\n",
+      "attributes": "",
+      "goal": "Lynch every criminal and evildoer."
+    },
+    "mafia": {
+      "alignment": "Mafia",
+      "summary": "A bad guy",
+      "abilities": "",
+      "attributes": "",
+      "goal": "Kill anyone who doesn't submit to Mafia."
+    }
+}
