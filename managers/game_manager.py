@@ -110,9 +110,16 @@ class GameManager(commands.Cog):
             print("Moving user to lobby")
             await member.move_to(lobby)
 
+    @commands.command()
+    async def messageAll(self, ctx, *args):
+        """Moves everyone to channel."""
+        for channel in ctx.guild.channels:
+            if "lobby" in str(channel):
+                lobby = channel
+                break
 
-
-
+        for member in lobby.members:
+            await member.send("hello")
 
 
 

@@ -37,6 +37,9 @@ class CharaterManager(commands.Cog):
             alignment = 0 
             role = 0
             players.append(Character(member, alignment, role))
+            message = "Welcome to Town of Discord! The game has started. You have the role of:\n"
+            message += role
+            await member.send(message)
             
         if len(memberList)%4 == 0:
             print("the ideal size")
