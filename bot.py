@@ -25,6 +25,24 @@ async def on_ready():
             await guild.create_voice_channel(lobbyName)
             await guild.create_text_channel(lobbyName)
 
+        makeRole = True
+        for role in guild.roles:
+            if "muted" in str(role):
+                print("Role already exists")
+                makeRole = False
+                break
+        if makeRole is True:
+            await guild.create_role(name="muted")
+
+        makeRole = True
+        for role in guild.roles:
+            if "unmuted" in str(role):
+                print("Role already exists")
+                makeRole = False
+                break
+        if makeRole is True:
+            await guild.create_role(name="unmuted")
+
 
 @bot.event
 async def on_message(message):
