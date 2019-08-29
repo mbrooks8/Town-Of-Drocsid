@@ -18,7 +18,7 @@ async def on_ready():
         makeChannel = True
         for channel in guild.channels:
             if lobbyName in str(channel):
-                print("Channel already exists")
+                #print("Channel already exists")
                 makeChannel = False
                 break
         if makeChannel is True:
@@ -29,20 +29,11 @@ async def on_ready():
         for role in guild.roles:
             #print(role)
             if "muted" in str(role):
-                print("Role already exists")
+                #print("Role already exists")
                 makeRole = False
                 break
         if makeRole is True:
             await guild.create_role(name="muted")
-
-        makeRole = True
-        for role in guild.roles:
-            if "unmuted" in str(role):
-                print("Role already exists")
-                makeRole = False
-                break
-        if makeRole is True:
-            await guild.create_role(name="unmuted")
 
 
 @bot.event
@@ -76,10 +67,7 @@ async def on_voice_state_update(member, begin, end):
 
 
 def setup():
-    myGuild = ""
-    for guild in bot.guilds:
-        myGuild = guild
-    gameManager = GameManager(bot, myGuild)
+    gameManager = GameManager(bot)
     bot.add_cog(gameManager)
 
 

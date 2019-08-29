@@ -11,8 +11,7 @@ class GameManager(commands.Cog):
     #night -- 0
     #discussion & voting -- 1
     #Judgement -- 2
-    def __init__(self, bot, guild):
-        self.guild = guild
+    def __init__(self, bot):
         self.bot = bot
         self.started = False
         self.players = []
@@ -27,20 +26,24 @@ class GameManager(commands.Cog):
         #Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
         self.phase = (self.phase + 1)%3
         print("this is the phase", self.phase)
-        for role in self.guild.roles:
-            if "unmuted" in str(role):
-                unmuted = role
-            if "muted" in str(role):
-                muted = role
-        if self.phase == 0:
-            for member in self.players:
-                await member.add_roles(muted)
-        if self.phase == 1:
-            for member in self.players:
-                await member.add_roles(unmuted)
-        if self.phase == 2:
-            for member in self.players:
-                await member.add_roles(muted)
+
+        for guild in ctx.bot.guilds:
+            for role in guild.roles:
+                #print(role)
+                if "muted" in str(role):
+                    muted = role
+            if self.phase == 0:
+                for member in self.players:
+                    print(member)
+                    await member.add_roles(muted)
+            if self.phase == 1:
+                for member in self.players:
+                    print(member)
+                    await member.remove_roles(muted)
+            if self.phase == 2:
+                for member in self.players:
+                    print(member)
+                    await member.add_roles(muted)
 
 
     @commands.command()
