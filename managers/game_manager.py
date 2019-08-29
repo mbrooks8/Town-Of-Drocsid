@@ -77,6 +77,17 @@ class GameManager(commands.Cog):
     async def end(self, ctx, *args):
         """Forces the game to end."""
         self.started = False
+
+        #moves all users to the lobby
+        for channel in ctx.guild.channels:
+            if "lobby" in str(channel):
+                lobby = channel
+                break
+        for member in ctx.guild.members:
+            print("Moving user to lobby")
+            await member.move_to(lobby)
+
+        #deletes game channels
         for channel in ctx.guild.channels:
             if "discord" in str(channel).lower():
                 print(channel)
