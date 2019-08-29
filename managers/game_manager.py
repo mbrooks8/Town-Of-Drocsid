@@ -12,19 +12,6 @@ class GameManager(commands.Cog):
         self.started = False
         self.players = []
 
-    # @commands.command()
-    # async def join(self, ctx, *args):
-    #     """Lets Players Join The Game."""
-    #     if len(self.players) <= 15:
-    #         if ctx.message.author.name not in self.players:
-    #             self.players[ctx.message.author.name] = "something"
-    #             message = ctx.message.author.name, "has joined the game!"
-    #             await ctx.send(message)
-    #         else:
-    #             await ctx.send("You are already part of this game.")
-    #     else:
-    #         await ctx.send("There are already 15 players in this game.")
-
     @commands.command()
     async def leave(self, ctx, *args):
         """Lets Players Leave The Game."""
@@ -40,7 +27,8 @@ class GameManager(commands.Cog):
         """Lists the players."""
         message = "```These are the players:\n"
         for player in self.players:
-            message += player.name + "\n```"
+            message += player.name + "\n"
+        message += "```"
         await ctx.send(message)
 
     @commands.command()
@@ -81,14 +69,8 @@ class GameManager(commands.Cog):
                 await ctx.send(message)
 
         else:
-            self.started = True
             message = "You must be in the lobby to start the game"
-            await ctx.message.guild.create_voice_channel("Town Of Discord")
-            await ctx.message.guild.create_text_channel("Town Of Discord")
-            message = "The Game Has Started"
             await ctx.send(message)
-
-
 
 
     @commands.command()
@@ -110,8 +92,25 @@ class GameManager(commands.Cog):
             if "lobby" in str(channel):
                 lobby = channel
                 break
+        print(ctx.guild.members)
         for member in ctx.guild.members:
             print("Moving user to lobby")
             await member.move_to(lobby)
+
+    @commands.command()
+    async def messageAll(self, ctx, *args):
+        """Moves everyone to channel."""
+        for channel in ctx.guild.channels:
+            if "lobby" in str(channel):
+                lobby = channel
+                break
+
+        for member in lobby.members:
+            await member.send("hello")
+
+
+
+
+
 
 
