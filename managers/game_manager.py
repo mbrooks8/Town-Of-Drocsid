@@ -95,12 +95,13 @@ class GameManager(commands.Cog):
 
                 self.characterManager.initCharacters(self.players)
                 for player in self.characterManager.players:
-                    message = "Hello" + player.member.name + "Welcome to Town of Discord! The game has started. You have the role of:\n"
-                    message += player.role + "\n"
-                    message += player.alignment + "\n"
-                    message += player.alive + "\n"
+                    message = "Hello" + player.member.name + " Welcome to Town of Discord! The game has started. You have the role of:\n"
+                    print("blah blah",player.role)
+                    message += player.role["name"] + "\n"
+                    message += str(player.role["alignment"]) + "\n"
+                    message += str(player.alive) + "\n"
 
-                message = "The Game Has Started"
+                message += "The Game Has Started"
                 
                 await ctx.send(message)
 
