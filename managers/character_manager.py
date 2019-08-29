@@ -1,5 +1,6 @@
 import logging
 from models import Character
+from models import Role
 import random
 log = logging.getLogger('tod')
 
@@ -15,33 +16,28 @@ class CharaterManager():
         mafiaCount = round(count/4)
         detectiveCount = 1
         doctorCount = 1
+        
         roles ={
             "civilianCount":civilianCount,
             "mafiaCount":mafiaCount,
             "detectiveCount":detectiveCount,
             "doctorCount":doctorCount
             };
-        print("count is: ",count)
         return roles
     
     def initCharacters(self, memberList):
-        print(memberList)
-        players = []
+        self.players = []
         roles = self.getRoles(len(memberList))
-        print(roles)
         if roles is []:
             return False
         for member in memberList:
             sample = random.sample(roles.items(), k=1)
-            print(sample)
+            print("test",sample[0][0])
             alignment = 0 
             role = 0
-            summary = ""
-            abilities = ""
-            attributes = ""
-            goal = ""
-            players.append(Character(member, alignment, role, summary, abilities, attributes, goal))
-
+            self.players.append(Character(member, alignment, role))
+            message = "Welcome to Town of Discord! The game has started. You have the role of:\n"
+            message += str(role)
             
         if len(memberList)%4 == 0:
             print("the ideal size")
