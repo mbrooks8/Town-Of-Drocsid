@@ -68,6 +68,12 @@ class GameManager(commands.Cog):
                     await member.move_to(theGameChannel)
 
                 self.characterManager.initCharacters(self.players)
+                for player in self.characterManager.players:
+                    message = "Hello" + player.member.name + "Welcome to Town of Discord! The game has started. You have the role of:\n"
+                    message += player.role + "\n"
+                    message += player.alignment + "\n"
+                    message += player.alive + "\n"
+
                 message = "The Game Has Started"
                 
                 await ctx.send(message)
@@ -88,8 +94,9 @@ class GameManager(commands.Cog):
                 lobby = channel
                 break
         for member in ctx.guild.members:
-            print("Moving user to lobby")
-            await member.move_to(lobby)
+            if member.voice is not None:
+                print("Moving user to lobby")
+                await member.move_to(lobby)
 
         #deletes game channels
         for channel in ctx.guild.channels:

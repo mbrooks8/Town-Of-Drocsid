@@ -9,7 +9,7 @@ class CharaterManager():
     log.debug("character class made")
 
     def getRoles(self, count):
-        if count < 4:
+        if count < 1:
             return[]
         civilianCount = count - 2 - round(count/4)#removes the doctor and detective and the mafia members
         mafiaCount = round(count/4)
@@ -36,9 +36,11 @@ class CharaterManager():
             print(sample)
             alignment = 0 
             role = 0
-            players.append(Character(member, alignment, role))
-            message = "Welcome to Town of Discord! The game has started. You have the role of:\n"
-            message += role
+            summary = ""
+            abilities = ""
+            attributes = ""
+            goal = ""
+            players.append(Character(member, alignment, role, summary, abilities, attributes, goal))
 
             
         if len(memberList)%4 == 0:
