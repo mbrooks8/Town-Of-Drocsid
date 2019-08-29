@@ -38,6 +38,14 @@ async def on_message(message):
             await message.channel.send(message.author.nick + " has paid respect.")
         else:
             await message.channel.send(message.author.name + " has paid respect.")
+
+    username = message.author.nick
+
+    if username == None:
+        username = message.author.name
+
+    log.info(f'[{message.channel.id} | {message.channel}] {username} - {message.content}')
+
     await bot.process_commands(message)
 
 @bot.event 
