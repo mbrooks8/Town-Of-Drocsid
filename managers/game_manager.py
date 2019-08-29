@@ -12,19 +12,6 @@ class GameManager(commands.Cog):
         self.started = False
         self.players = []
 
-    # @commands.command()
-    # async def join(self, ctx, *args):
-    #     """Lets Players Join The Game."""
-    #     if len(self.players) <= 15:
-    #         if ctx.message.author.name not in self.players:
-    #             self.players[ctx.message.author.name] = "something"
-    #             message = ctx.message.author.name, "has joined the game!"
-    #             await ctx.send(message)
-    #         else:
-    #             await ctx.send("You are already part of this game.")
-    #     else:
-    #         await ctx.send("There are already 15 players in this game.")
-
     @commands.command()
     async def leave(self, ctx, *args):
         """Lets Players Leave The Game."""
