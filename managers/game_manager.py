@@ -81,7 +81,11 @@ class GameManager(commands.Cog):
                 await ctx.send(message)
 
         else:
+            self.started = True
             message = "You must be in the lobby to start the game"
+            await ctx.message.guild.create_voice_channel("Town Of Discord")
+            await ctx.message.guild.create_text_channel("Town Of Discord")
+            message = "The Game Has Started"
             await ctx.send(message)
 
 

@@ -7,6 +7,10 @@ from utils import logger
 # Initialize Bot
 description = '''A town of salem knock off.'''
 bot = commands.Bot(command_prefix='!', description=description)
+gameManager = GameManager(bot)
+charaterManager = CharaterManager(bot)
+bot.add_cog(gameManager)
+bot.add_cog(charaterManager)
 
 @bot.event
 async def on_ready():
@@ -50,10 +54,7 @@ async def on_voice_state_update(member, begin, end):
 
 
 def setup():
-    gameManager = GameManager(bot)
-    charaterManager = CharaterManager(bot)
-    bot.add_cog(gameManager)
-    bot.add_cog(charaterManager)
+    pass
 
 
 if __name__ == "__main__":
