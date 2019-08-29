@@ -26,7 +26,6 @@ class GameManager(commands.Cog):
         #Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
         self.phase = (self.phase + 1)%3
         print("this is the phase", self.phase)
-
         for guild in ctx.bot.guilds:
             for role in guild.roles:
                 #print(role)
