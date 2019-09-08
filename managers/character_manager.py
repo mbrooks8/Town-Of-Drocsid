@@ -13,7 +13,7 @@ class CharaterManager():
     def getRoles(self, count):
         with open('./models/roles.json', 'r') as f:
             roles = json.load(f)
-        #print(roles.keys())
+        # print(roles.keys())
         if count < 1:
             return[]
         civilianCount = count - 2 - round(count/4)#removes the doctor and detective and the mafia members
@@ -34,20 +34,21 @@ class CharaterManager():
             return False
         for member in memberList:
             sample = random.sample(roles.keys(), k=1)
-            print(sample)
+            # print(sample)
             key = sample[0]
             roles[key]["count"] = roles[key]["count"] - 1 
             self.players.append(Character(member, roles[key]))
-            message = "Welcome to Town of Discord! The game has started. You have the role of:"
-            message += str(roles[key])
-            print(message)
+            # message = "Welcome to Town of Discord! The game has started. You have the role of:"
+            # message += str(roles[key])
+            # print(message)
             if roles[key]["count"] == 0:
                 del roles[key]
             alignment = 0 
             role = 0
-            #todo update key to be the role
-        for player in self.players:
-            print(player)
+            # todo update key to be the role
+
+        # for player in self.players:
+        #     print(player)
             
         if len(memberList)%4 == 0:
             print("the ideal size")

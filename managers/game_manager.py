@@ -3,6 +3,7 @@ from managers import character_manager
 from discord.ext import commands
 from datetime import datetime, timedelta
 import time
+import asyncio
 
 
 class GameManager(commands.Cog):
@@ -17,32 +18,54 @@ class GameManager(commands.Cog):
         self.players = []
         self.characterManager = character_manager.CharaterManager()
         self.phase = 1
+        self.client = discord.Client()
+        self.roles = {}
+        self.channels = {}
 
-    @commands.command()
-    async def move(self, ctx, *args):
+    async def start_timer(self, delay, what):
+        await self.channels["town-of-discord"].send(what)
+        await asyncio.sleep(delay)
+        await self.move(self.bot)
+
+    async def move(self, ctx):
         """Moves the phase of the game to the next phase."""
-        #Night: Lock chat channel and mute voice channel
-        #Discussion: open voice channel unlock chat channel
-        #Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
-        self.phase = (self.phase + 1)%3
+
+        self.phase = (self.phase + 1) % 3
         print("this is the phase", self.phase)
-        for guild in ctx.bot.guilds:
-            for role in guild.roles:
-                #print(role)
-                if "muted" in str(role):
-                    muted = role
+        for guild in ctx.guilds:
             if self.phase == 0:
+                # Night: Lock chat channel and mute voice channel
+                # Mute everyone
                 for member in self.players:
-                    print(member)
-                    await member.add_roles(muted)
+                    print("adding" + str(member) + "to muted discord role")
+                    await member.add_roles(self.roles["muted"])
+                # let people do their class actions for 30 seconds
+                loop = asyncio.get_event_loop()
+                task1 = loop.create_task(self.start_timer(30, 'Night Phase Has Started'))
+                await task1
+
             if self.phase == 1:
+                # Discussion: open voice channel unlock chat channel
                 for member in self.players:
                     print(member)
-                    await member.remove_roles(muted)
+                    await member.remove_roles(self.roles["muted"])
+
+                # day lasts for 45 seconds
+                loop = asyncio.get_event_loop()
+                task1 = loop.create_task(self.start_timer(45, 'Discussion Phase Has Started'))
+                await task1
+
             if self.phase == 2:
+                # Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
                 for member in self.players:
+                    #todo: if the player is not the one that waas voted for, mute them.
                     print(member)
-                    await member.add_roles(muted)
+                    await member.add_roles(self.roles["muted"])
+
+                loop = asyncio.get_event_loop()
+                task1 = loop.create_task(self.start_timer(20, 'Judgement Phase Has Started'))
+                await task1
+
 
 
     @commands.command()
@@ -90,29 +113,52 @@ class GameManager(commands.Cog):
                         break
 
                 if makeChannel is True:
+                    #Make the channel
                     await ctx.message.guild.create_voice_channel(gameChannel)
-                    await ctx.message.guild.create_text_channel(gameChannel)
+                    await ctx.message.guild.create_text_channel("town-of-discord")
 
                 for channel in ctx.message.guild.channels:
-                    if channel.name == gameChannel:
-                        theGameChannel = channel
+                    self.channels[channel.name] = channel
+
+                print("These are the available channels:", self.channels)
+
+                for guild in ctx.bot.guilds:
+                    # get muted role
+                    for role in guild.roles:
+                        # print(role)
+                        if "muted" in str(role):
+                            # print("found muted role")
+                            muted = role
+                            self.roles["muted"] = muted
+                            break
+                    break
+
+                await self.channels[gameChannel].set_permissions(muted,
+                                                                 connect=False,
+                                                                 speak=False,
+                                                                 mute_members=False,
+                                                                 deafen_members=False)
 
                 for member in lobby.members:
                     self.players.append(member)
-                    await member.move_to(theGameChannel)
+                    await member.move_to(self.channels[gameChannel])
 
                 self.characterManager.initCharacters(self.players)
 
                 for player in self.characterManager.players:
                     message = "Hello" + player.member.name + " Welcome to Town of Discord! The game has started. You have the role of:\n"
-                    print("blah blah",player.role)
+                    print("blah blah", player)
                     message += player.role["name"] + "\n"
                     message += str(player.role["alignment"]) + "\n"
                     message += str(player.alive) + "\n"
+                    await ctx.send(message)
 
-                message += "The Game Has Started"
-                
+                message = "The Game Has Started"
                 await ctx.send(message)
+
+                loop = asyncio.get_event_loop()
+                task1 = loop.create_task(self.start_timer(4, 'The Game Has Started'))
+                await task1
 
         else:
             message = "You must be in the lobby to start the game"
