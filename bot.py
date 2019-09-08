@@ -61,9 +61,13 @@ async def on_message(message):
 async def on_voice_state_update(member, begin, end):
     if end.channel.name == "lobby":
         if(member.nick is not None):
-            log.info(str(member.nick)+" has joined the lobby");
+            log.info(str(member.nick)+" has joined the lobby")
         else:
             log.info(str(member)+" has joined the lobby")
+
+        introMessage = "Welcome to the lobby! Type \n ```!help "
+
+        await member.send(introMessage)
 
 
 
