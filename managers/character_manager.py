@@ -10,6 +10,9 @@ class CharaterManager():
     """Tracks the number of posts people make."""
     log.debug("character class made")
 
+    def __init__(self):
+        self.players = []
+
     def getRoles(self, count):
         with open('./models/roles.json', 'r') as f:
             roles = json.load(f)
@@ -28,7 +31,6 @@ class CharaterManager():
         return roles
     
     def initCharacters(self, memberList):
-        self.players = []
         roles = self.getRoles(len(memberList))
         if roles is []:
             return False
@@ -38,9 +40,6 @@ class CharaterManager():
             key = sample[0]
             roles[key]["count"] = roles[key]["count"] - 1 
             self.players.append(Character(member, roles[key]))
-            # message = "Welcome to Town of Discord! The game has started. You have the role of:"
-            # message += str(roles[key])
-            # print(message)
             if roles[key]["count"] == 0:
                 del roles[key]
             alignment = 0 
@@ -50,7 +49,7 @@ class CharaterManager():
         # for player in self.players:
         #     print(player)
             
-        if len(memberList)%4 == 0:
+        if len(memberList) % 4 == 0:
             print("the ideal size")
         else:
             print("you can still play, but the 3:1 ratio is off")

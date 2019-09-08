@@ -8,64 +8,107 @@ import asyncio
 
 class GameManager(commands.Cog):
     """Manages the game."""
-    #Phases of the game are:
-    #night -- 0
-    #discussion & voting -- 1
-    #Judgement -- 2
+    # Phases of the game are:
+    # night -- 0
+    # discussion & voting -- 1
+    # Judgement -- 2
     def __init__(self, bot):
         self.bot = bot
         self.started = False
         self.players = []
         self.characterManager = character_manager.CharaterManager()
-        self.phase = 1
+        self.phase = 0
         self.client = discord.Client()
         self.roles = {}
         self.channels = {}
 
     async def start_timer(self, delay, what):
-        await self.channels["town-of-discord"].send(what)
-        await asyncio.sleep(delay)
-        await self.move(self.bot)
+        if self.started is True:
+            await self.channels["town-of-discord"].send(what)
+            await asyncio.sleep(delay)
 
     async def move(self, ctx):
         """Moves the phase of the game to the next phase."""
+        if self.started is True:
+            self.phase = (self.phase + 1) % 3
+            print("The current phase is:", self.phase)
 
-        self.phase = (self.phase + 1) % 3
-        print("this is the phase", self.phase)
-        for guild in ctx.guilds:
             if self.phase == 0:
                 # Night: Lock chat channel and mute voice channel
+
                 # Mute everyone
                 for member in self.players:
-                    print("adding" + str(member) + "to muted discord role")
+                    # print("adding" + str(member) + "to muted discord role")
                     await member.add_roles(self.roles["muted"])
+
                 # let people do their class actions for 30 seconds
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(30, 'Night Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, 'Night Phase Has Started'))
                 await task1
+                await self.move(self.bot)
 
             if self.phase == 1:
                 # Discussion: open voice channel unlock chat channel
                 for member in self.players:
-                    print(member)
+                    # print(member)
                     await member.remove_roles(self.roles["muted"])
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(45, 'Discussion Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, 'Discussion Phase Has Started'))
                 await task1
+                await self.move(self.bot)
 
             if self.phase == 2:
-                # Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
+                # Judgement: mute all players except the voted player
+                # and block everyone from posting in chat channel except the voted player
                 for member in self.players:
-                    #todo: if the player is not the one that waas voted for, mute them.
-                    print(member)
+                    # todo: if the player is not the one that was voted for, mute them.
+                    # print(member)
                     await member.add_roles(self.roles["muted"])
 
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(20, 'Judgement Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, 'Judgement Phase Has Started'))
                 await task1
 
+                end = self.check_game_end()
+                if end is not None:
+                    print("The game has ended and" + end + "has won!")
+                    self.started = False
+                await self.move(self.bot)
+
+    def check_game_end(self):
+        """Check to see if the game should end. Returns something if it should end"""
+        # End of game condiditons:
+        # Mafia wins if there are numMafia >= numTown AND no other evil roles
+        # Town wins if all evil roles have been killed
+        print(self.characterManager.players)
+        numTown = 0
+        numMafia = 0
+        winner = None
+        # for player in self.characterManager.players:
+        #     if player.alive == 1:
+        #         if player.alignment == -1:
+        #             numMafia += 1
+        #         elif player.alignment == 1:
+        #             numTown += 1
+
+        if numMafia >= numTown:
+            winner = "Mafia"
+        if numMafia == 0:
+            winner = "Town"
+        return winner
+
+
+    # @commands.command()
+    # async def vote(self, ctx, user):
+    #     """Lets Players Leave The Game."""
+    #     if ctx.message.author.name in self.players:
+    #         message = ctx.message.author.name + "has left the game"
+    #         self.players.pop(ctx.message.author.name, None)
+    #         await ctx.send(message)
+    #     else:
+    #         await ctx.send("You are not part of this game.")
 
 
     @commands.command()
@@ -147,19 +190,15 @@ class GameManager(commands.Cog):
 
                 for player in self.characterManager.players:
                     message = "Hello" + player.member.name + " Welcome to Town of Discord! The game has started. You have the role of:\n"
-                    print("blah blah", player)
+                    print("blah blah", player.member)
                     message += player.role["name"] + "\n"
-                    message += str(player.role["alignment"]) + "\n"
-                    message += str(player.alive) + "\n"
-                    await ctx.send(message)
+                    #message += str(player.role["alignment"]) + "\n"
+                    #message += str(player.alive) + "\n"
+                    await player.member.send(message)
 
                 message = "The Game Has Started"
                 await ctx.send(message)
-
-                loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(4, 'The Game Has Started'))
-                await task1
-
+                await self.move(self.bot)
         else:
             message = "You must be in the lobby to start the game"
             await ctx.send(message)

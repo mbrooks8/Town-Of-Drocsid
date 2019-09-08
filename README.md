@@ -32,3 +32,10 @@ The phases of the game are:
         Night: Lock chat channel and mute voice channel
         Discussion: open voice channel unlock chat channel
         Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
+        
+## Contributing
+Everything should work. If everything works then commit directly to master =)
+
+
+
+

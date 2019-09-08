@@ -66,6 +66,7 @@ async def on_voice_state_update(member, begin, end):
             log.info(str(member)+" has joined the lobby")
 
 
+
 def setup():
     gameManager = GameManager(bot)
     bot.add_cog(gameManager)
