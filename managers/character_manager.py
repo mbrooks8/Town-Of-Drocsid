@@ -31,6 +31,7 @@ class CharaterManager():
         return roles
     
     def initCharacters(self, memberList):
+        self.players = []
         roles = self.getRoles(len(memberList))
         if roles is []:
             return False
