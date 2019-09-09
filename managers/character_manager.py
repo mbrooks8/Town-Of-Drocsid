@@ -36,6 +36,7 @@ class CharaterManager():
         if roles is []:
             return False
         for member in memberList:
+            print(memberList)
             sample = random.sample(roles.keys(), k=1)
             # print(sample)
             key = sample[0]

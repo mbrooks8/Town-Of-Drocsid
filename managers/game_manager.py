@@ -25,7 +25,7 @@ class GameManager(commands.Cog):
 
     async def start_timer(self, delay, what):
         if self.started is True:
-            await self.channels["town-of-discord"].send(what)
+            await self.channels["town-of-drocsid"].send(what)
             await asyncio.sleep(delay)
 
     async def move(self, ctx):
@@ -75,11 +75,11 @@ class GameManager(commands.Cog):
                 end = self.check_game_end()
                 if end is not None:
                     message = "The game has ended and " + end + " has won!"
-                    await self.channels["town-of-discord"].send(message)
+                    await self.channels["town-of-drocsid"].send(message)
                     self.started = False
                 await self.move(self.bot)
-        else:
-            print("Game has not started")
+        # else:
+        #     print("Game has not started")
 
     def check_game_end(self):
         """Check to see if the game should end. Returns something if it should end"""
@@ -140,7 +140,8 @@ class GameManager(commands.Cog):
     @commands.command()
     async def start(self, ctx, *args):
         """Starts the game."""
-        gameChannel = "Town Of Discord"
+        self.players = []
+        gameChannel = "Town of Drocsid"
         channel = ctx.message.author.voice.channel
 
         if "lobby" in str(channel):
@@ -161,16 +162,16 @@ class GameManager(commands.Cog):
                         break
 
                 for category in ctx.guild.categories:
-                    if "Game" in str(category):
+                    if "Town Of Drocsid" in str(category):
                         makeCategory = False
                         break
 
                 if makeCategory is True:
-                    self.categories["Game"] = await ctx.guild.create_category_channel("Game")
+                    self.categories["Town Of Drocsid"] = await ctx.guild.create_category_channel("Town Of Drocsid")
 
                 if makeChannel is True:
-                    await ctx.message.guild.create_voice_channel(gameChannel, category=self.categories["Game"])
-                    await ctx.message.guild.create_text_channel("town-of-discord", category=self.categories["Game"])
+                    await ctx.message.guild.create_voice_channel(gameChannel, category=self.categories["Town Of Drocsid"])
+                    await ctx.message.guild.create_text_channel("town-of-drocsid", category=self.categories["Town Of Drocsid"])
 
                 for channel in ctx.message.guild.channels:
                     self.channels[channel.name] = channel
@@ -203,12 +204,12 @@ class GameManager(commands.Cog):
                 
                 for player in self.characterManager.players:
                     channelName = str(player.member)
-                    print("player",channelName)
-                    await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Game"])
+                    print("player", channelName)
+                    await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
                     for channel in ctx.message.guild.channels:
                         if channel.name == channelName:
-                            await channel.set_permissions(player.member,read_messages=True)
-                            await channel.set_permissions(ctx.message.guild.default_role,read_messages=False)
+                            await channel.set_permissions(player.member ,read_messages=True)
+                            await channel.set_permissions(ctx.message.guild.default_role, read_messages=False)
 
                 
                 
@@ -216,9 +217,9 @@ class GameManager(commands.Cog):
                 print("Players in character manager:", str(self.characterManager.players))
                 for player in self.characterManager.players:
 
-                    message = "Hello" + player.member.name + " Welcome to Town of Discord! The game has started. You have the role of:\n ```"
+                    message = "Hello" + player.member.name + " Welcome to Town of Drocsid! The game has started. You have the role of:\n ```"
                     #print("blah blah", player.member)
-                    message += player.role["name"] + "\n"
+                    message += str(player.role["name"]) + "\n"
                     message += str(player.role["summary"]) + "\n"
                     message += str(player.role["goal"]) + "\n"
                     message += str(player.role["attributes"]) + "\n"
@@ -250,14 +251,16 @@ class GameManager(commands.Cog):
 
         #deletes game channels
         for channel in ctx.guild.channels:
-            if "discord" in str(channel).lower():
-                print(channel)
-                await channel.delete()
-
+            try:
+                if str(channel.category) == "Town Of Drocsid":
+                    #print(channel)
+                    await channel.delete()
+            except:
+                print(channel, channel.category)
         #Removes all made categories
         for category in ctx.guild.categories:
-            if "game" in str(category).lower():
-                print(category)
+            if "Town Of Drocsid" in str(category):
+                #print(category)
                 await category.delete()
         message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
         await ctx.send(message)

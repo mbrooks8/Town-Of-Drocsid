@@ -1,8 +1,10 @@
 class Character(object):
-    def __init__(self, member, role, alive =1):
+    def __init__(self, member, role, alive=1):
         self.member = member
         self.role = role
         self.alive = alive
+        self.will = ""
+        self.visited = ""
 
     def setRole(self, role):
         self.role = role

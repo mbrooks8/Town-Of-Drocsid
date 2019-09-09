@@ -52,6 +52,7 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+
 @bot.event 
 async def on_voice_state_update(member, begin, end):
     if end.channel.name == "lobby":
@@ -60,9 +61,10 @@ async def on_voice_state_update(member, begin, end):
         else:
             log.info(str(member)+" has joined the lobby")
 
-        introMessage = "Welcome to the lobby! If you need help with the game type \n ```!helpRoles ```"
+        introMessage = "Welcome to the lobby! If you need help with the game type \n ```!helpGame \n !helpRoles```"
 
         await member.send(introMessage)
+
 
 @commands.command()
 async def helpRoles(ctx):
@@ -71,7 +73,7 @@ async def helpRoles(ctx):
     with open('./models/roles.json', 'r') as roleJson:
         roles = json.load(roleJson)
         for role in roles:
-            print(roles[role])
+            #print(roles[role])
             message += "```Name:" + roles[role]["name"] + "\n"
             message += "alignment:" + str(roles[role]["alignment"]) + "\n"
             message += "summary:" + str(roles[role]["summary"]) + "\n"
@@ -80,10 +82,19 @@ async def helpRoles(ctx):
             message += "goal:" + str(roles[role]["goal"]) + "```\n"
     await ctx.message.author.send(message)
 
+
+@commands.command()
+async def helpGame(ctx):
+    """Moves everyone to channel."""
+    message = "```Town of Salem is a browser-based game that challenges players on their ability to convincingly lie as well as detect when other players are lying. The game ranges from 7 to 15 players. These players are randomly divided into alignments - Town, Mafia, and Neutrals. If you are a Town member (the good guys) you must track down the Mafia and other villains before they kill you. The catch? You don't know who is a Town member and who is a villain. If you are an evil role, such as a Serial Killer, you secretly murder Town members in the veil of night and try to avoid getting caught.```"
+    await ctx.message.author.send(message)
+
 def setup():
     gameManager = GameManager(bot)
     bot.add_cog(gameManager)
     bot.add_command(helpRoles)
+    bot.add_command(helpGame)
+
 
 if __name__ == "__main__":
     # Initialize Logging
