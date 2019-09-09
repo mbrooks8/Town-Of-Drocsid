@@ -22,6 +22,7 @@ class GameManager(commands.Cog):
         self.roles = {}
         self.channels = {}
         self.categories = {}
+        self.lobby = {}
 
     async def start_timer(self, delay, what):
         if self.started is True:
@@ -238,25 +239,32 @@ class GameManager(commands.Cog):
     async def end(self, ctx, *args):
         """Forces the game to end."""
         self.started = False
+        channelList = []
 
-        #moves all users to the lobby
+        # gets the lobby
         for channel in ctx.guild.channels:
             if "lobby" in str(channel):
                 lobby = channel
                 break
+
+        # Gets all game created channels
+        for channel in ctx.guild.channels:
+            try:
+                if str(channel.category) == "Town Of Drocsid":
+                    channelList.append(channel)
+            except:
+                pass
+
+        # moves all users to the lobby
         for member in ctx.guild.members:
             if member.voice is not None:
                 print("Moving user to lobby")
                 await member.move_to(lobby)
 
-        #deletes game channels
-        for channel in ctx.guild.channels:
-            try:
-                if str(channel.category) == "Town Of Drocsid":
-                    #print(channel)
-                    await channel.delete()
-            except:
-                print(channel, channel.category)
+        # deletes game channels
+        for channel in channelList:
+            await channel.delete()
+
         #Removes all made categories
         for category in ctx.guild.categories:
             if "Town Of Drocsid" in str(category):
