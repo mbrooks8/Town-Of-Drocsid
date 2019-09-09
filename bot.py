@@ -1,6 +1,6 @@
 from discord.ext import commands
 from managers import GameManager
-
+import json
 from utils import logger
 
 # Initialize Bot
@@ -48,12 +48,7 @@ async def on_message(message):
         else:
             await message.channel.send(message.author.name + " has paid respect.")
 
-    username = message.author.nick
-
-    if username == None:
-        username = message.author.name
-
-    log.info(f'[{message.channel.id} | {message.channel}] {username} - {message.content}')
+    log.info(f'[{message.channel.id} | {message.channel}] {message.author} - {message.content}')
 
     await bot.process_commands(message)
 
@@ -65,16 +60,30 @@ async def on_voice_state_update(member, begin, end):
         else:
             log.info(str(member)+" has joined the lobby")
 
-        introMessage = "Welcome to the lobby! Type \n ```!help "
+        introMessage = "Welcome to the lobby! If you need help with the game type \n ```!helpRoles ```"
 
         await member.send(introMessage)
 
-
+@commands.command()
+async def helpRoles(ctx):
+    """Moves everyone to channel."""
+    message = "Roles:\n"
+    with open('./models/roles.json', 'r') as roleJson:
+        roles = json.load(roleJson)
+        for role in roles:
+            print(roles[role])
+            message += "```Name:" + roles[role]["name"] + "\n"
+            message += "alignment:" + str(roles[role]["alignment"]) + "\n"
+            message += "summary:" + str(roles[role]["summary"]) + "\n"
+            message += "abilities:" + str(roles[role]["abilities"]) + "\n"
+            message += "attributes:" + str(roles[role]["attributes"]) + "\n"
+            message += "goal:" + str(roles[role]["goal"]) + "```\n"
+    await ctx.message.author.send(message)
 
 def setup():
     gameManager = GameManager(bot)
     bot.add_cog(gameManager)
-
+    bot.add_command(helpRoles)
 
 if __name__ == "__main__":
     # Initialize Logging
@@ -89,3 +98,22 @@ if __name__ == "__main__":
         token = str(f.read())
     bot.run(token)
     log.info("Bot Started...")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

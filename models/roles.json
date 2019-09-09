@@ -12,14 +12,14 @@
       "alignment": 2,
       "summary": "A surgeon skilled in trauma care who secretly heals people.",
       "abilities": "Heal one person each night, preventing them from dying.",
-      "attributes": "You may only Heal yourself once.\nYou will know if your target is attacked.\nHealing will give a Powerful Defense.\n",
+      "attributes": "You may only Heal yourself once.\nYou will know if your target is attacked.\nHealing will give a Powerful Defense.",
       "goal": "Lynch every criminal and evildoer."
     },
     "detective": {
       "name":"detective",
       "alignment": 2,
       "summary": "A private eye who secretly gathers information.",
-      "abilities": "Investigate one person each night for a clue to their role.\n",
+      "abilities": "Investigate one person each night for a clue to their role.",
       "attributes": "",
       "goal": "Lynch every criminal and evildoer."
     },
