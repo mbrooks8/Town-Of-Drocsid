@@ -3,8 +3,8 @@
       "name":"civilian",
       "alignment": 1,
       "summary": "Your a fuckin townie",
-      "abilities": "",
-      "attributes": "",
+      "abilities": "None",
+      "attributes": "None",
       "goal": "Lynch every criminal and evildoer."
     },
     "doctor": {
@@ -20,15 +20,15 @@
       "alignment": 2,
       "summary": "A private eye who secretly gathers information.",
       "abilities": "Investigate one person each night for a clue to their role.",
-      "attributes": "",
+      "attributes": "None",
       "goal": "Lynch every criminal and evildoer."
     },
     "mafia": {
       "name":"mafia",
       "alignment": -1,
       "summary": "A bad guy",
-      "abilities": "",
-      "attributes": "",
+      "abilities": "None",
+      "attributes": "None",
       "goal": "Kill anyone who doesn't submit to Mafia."
     }
 }

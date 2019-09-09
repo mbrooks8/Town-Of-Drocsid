@@ -62,9 +62,10 @@ async def on_voice_state_update(member, begin, end):
             else:
                 log.info(str(member)+" has joined the lobby")
 
-            introMessage = "Welcome to the lobby! If you need help with the game type \n ```!helpGame - Basic Game rules" \
+            introMessage = "Welcome to the lobby! If you need help with the game type" \
+                           "```!helpGame - Basic Game rules" \
                            "\n!helpRoles - Basic Role Descriptions" \
-                           "\n```"
+                           "\n```\n"
             await member.send(introMessage)
 
     except:

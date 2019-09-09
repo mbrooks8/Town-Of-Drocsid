@@ -222,14 +222,25 @@ class GameManager(commands.Cog):
                 print("Players in character manager:", str(self.characterManager.players))
                 for player in self.characterManager.players:
 
-                    message = "Hello" + player.member.name + " Welcome to Town of Drocsid! The game has started. You have the role of:\n ```"
-                    #print("blah blah", player.member)
-                    message += str(player.role["name"]) + "\n"
-                    message += str(player.role["summary"]) + "\n"
-                    message += str(player.role["goal"]) + "\n"
-                    message += str(player.role["attributes"]) + "\n"
-                    message += str(player.alive) + "```\n"
+                    message = "Hello " + player.member.name + \
+                              " Welcome to Town of Drocsid!\n" \
+                              "The game has started. You have the role of:```"
+                    message += "Name: " + str(player.role["name"]) + "\n\n"
+                    message += "Summary: " + str(player.role["summary"]) + "\n\n"
+                    message += "Goal: " + str(player.role["goal"]) + "\n\n"
+                    message += "Attributes: " + str(player.role["attributes"]) + "```\n"
+
+                    if player.role["alignment"] == -1:
+                        #player is a mafia, they need to know all the other mafia members
+                        message += "As a member of the mafia, your mafia mates are:\n```"
+                        for player in self.characterManager.players:
+                            if player.role["alignment"] == -1:
+                                message += player.member.name
+                        message += "```\n Good Luck!"
+
                     await player.member.send(message)
+
+
 
                 message = "The Game Has Started"
                 await ctx.send(message)
