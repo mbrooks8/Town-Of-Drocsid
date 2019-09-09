@@ -25,6 +25,7 @@ class GameManager(commands.Cog):
         self.lobby = {}
 
     async def start_timer(self, delay, what):
+        """Starts a await sleep timer. Lets you do run a function and let other people still send commands"""
         if self.started is True:
             await self.channels["town-of-drocsid"].send(what)
             await asyncio.sleep(delay)
@@ -42,8 +43,13 @@ class GameManager(commands.Cog):
                 for member in self.players:
                     # print("adding" + str(member) + "to muted discord role")
                     await member.add_roles(self.roles["muted"])
-
+                # move all the players to their respective channels:
+                # regular town people move to individual channels
+                # mafia move to a group channel with all mafia members
+                # doctor is given a list of people to heal, doctor picks one
+                # detective is given a list of people to investigate, detective picks one and their role is revealed
                 # let people do their class actions for 30 seconds
+
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(10, 'Night Phase Has Started'))
                 await task1
@@ -51,6 +57,7 @@ class GameManager(commands.Cog):
 
             if self.phase == 1:
                 # Discussion: open voice channel unlock chat channel
+                # All players talk to eachother n do stuff
                 for member in self.players:
                     # print(member)
                     await member.remove_roles(self.roles["muted"])
@@ -157,10 +164,9 @@ class GameManager(commands.Cog):
 
             else:
                 self.started = True
-
                 makeChannel = True
-
                 makeCategory = True
+
                 for channel in ctx.guild.channels:
                     if gameChannel in str(channel):
                         makeChannel = False
@@ -205,16 +211,26 @@ class GameManager(commands.Cog):
                     self.players.append(member)
                     await member.move_to(self.channels[gameChannel])
 
+                # Assign game roles to each person in the game
                 self.characterManager.initCharacters(self.players)
-                
+
+                # Create channel for Mafia:
+                mafiaChannel = await ctx.message.guild.create_voice_channel("Mafia", category=self.categories["Town Of Drocsid"])
+                await mafiaChannel.set_permissions(ctx.message.guild.default_role, read_messages=False)
+
+                # Create indiviual channels for each player
                 for player in self.characterManager.players:
-                    channelName = str(player.member)
-                    print("player", channelName)
-                    await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
-                    for channel in ctx.message.guild.channels:
-                        if channel.name == channelName:
-                            await channel.set_permissions(player.member ,read_messages=True)
-                            await channel.set_permissions(ctx.message.guild.default_role, read_messages=False)
+                    if player.role["alignment"] == -1:
+                        # player is mafia, create a channel for all of the mafia members and let them be in there
+                        await mafiaChannel.set_permissions(player.member, read_messages=True)
+                    else:
+                        channelName = str(player.member)
+                        print("player", channelName)
+                        await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
+                        for channel in ctx.message.guild.channels:
+                            if channel.name == channelName:
+                                await channel.set_permissions(player.member, read_messages=True)
+                                await channel.set_permissions(ctx.message.guild.default_role, read_messages=False)
 
                 
                 
