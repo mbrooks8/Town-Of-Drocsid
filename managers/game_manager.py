@@ -75,9 +75,13 @@ class GameManager(commands.Cog):
 
                 end = self.check_game_end()
                 if end is not None:
+                    #The game is over
+                    #Send end game messaage to channel
                     message = "The game has ended and " + end + " has won!"
                     await self.channels["town-of-drocsid"].send(message)
+                    #Set the game to end
                     self.started = False
+
                 await self.move(self.bot)
         # else:
         #     print("Game has not started")
