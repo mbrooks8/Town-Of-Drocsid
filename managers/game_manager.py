@@ -200,6 +200,18 @@ class GameManager(commands.Cog):
                     await member.move_to(self.channels[gameChannel])
 
                 self.characterManager.initCharacters(self.players)
+                
+                for player in self.characterManager.players:
+                    channelName = str(player.member)
+                    print("player",channelName)
+                    await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Game"])
+                    for channel in ctx.message.guild.channels:
+                        if channel.name == channelName:
+                            await channel.set_permissions(player.member,read_messages=True)
+                            await channel.set_permissions(ctx.message.guild.default_role,read_messages=False)
+
+                
+                
 
                 print("Players in character manager:", str(self.characterManager.players))
                 for player in self.characterManager.players:
