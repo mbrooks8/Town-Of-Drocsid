@@ -55,15 +55,20 @@ async def on_message(message):
 
 @bot.event 
 async def on_voice_state_update(member, begin, end):
-    if end.channel.name == "lobby":
-        if(member.nick is not None):
-            log.info(str(member.nick)+" has joined the lobby")
-        else:
-            log.info(str(member)+" has joined the lobby")
+    try:
+        if end.channel.name == "lobby":
+            if member.nick is not None:
+                log.info(str(member.nick)+" has joined the lobby")
+            else:
+                log.info(str(member)+" has joined the lobby")
 
-        introMessage = "Welcome to the lobby! If you need help with the game type \n ```!helpGame \n !helpRoles```"
+            introMessage = "Welcome to the lobby! If you need help with the game type \n ```!helpGame - Basic Game rules" \
+                           "\n!helpRoles - Basic Role Descriptions" \
+                           "\n```"
+            await member.send(introMessage)
 
-        await member.send(introMessage)
+    except:
+        pass
 
 
 @commands.command()
