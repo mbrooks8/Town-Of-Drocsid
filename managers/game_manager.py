@@ -39,16 +39,27 @@ class GameManager(commands.Cog):
             if self.phase == 0:
                 # Night: Lock chat channel and mute voice channel
 
-                # Mute everyone
-                for member in self.players:
-                    # print("adding" + str(member) + "to muted discord role")
-                    await member.add_roles(self.roles["muted"])
+                # # Mute everyone
+                # for member in self.players:
+                #     # print("adding" + str(member) + "to muted discord role")
+                #     await member.add_roles(self.roles["muted"])
+
                 # move all the players to their respective channels:
                 # regular town people move to individual channels
-                # mafia move to a group channel with all mafia members
-                # doctor is given a list of people to heal, doctor picks one
-                # detective is given a list of people to investigate, detective picks one and their role is revealed
-                # let people do their class actions for 30 seconds
+                for player in self.characterManager.players:
+                    # mafia move to a group channel with all mafia members
+                    if player.role["attribute"] == -1:
+                        await player.member.move_to(self.channels["Mafia"])
+                    else:
+                        await player.member.move_to(self.channels[player.member.name])
+
+                    # doctor is given a list of people to heal, doctor picks one
+                    if player.role["name"] == "doctor":
+                        print("Do a doctor thing")
+
+                    # detective is given a list of people to investigate, detective picks one and their role is revealed
+                    if player.role["name"] == "detective":
+                        print("Do a detective thing")
 
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(10, 'Night Phase Has Started'))
