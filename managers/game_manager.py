@@ -295,6 +295,13 @@ class GameManager(commands.Cog):
         # deletes game channels
         for channel in channelList:
             await channel.delete()
+            
+        #delete player specific channels
+        for player in self.characterManager.players:
+            channelName = str(player.member)
+            for channel in ctx.message.guild.channels:
+                if channel.name == channelName:
+                    await channel.delete()
 
         #Removes all made categories
         for category in ctx.guild.categories:
