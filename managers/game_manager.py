@@ -103,7 +103,7 @@ class GameManager(commands.Cog):
             if player.alive == 1:
                 if player.role["alignment"] == -1:
                     numMafia += 1
-                elif player.role["alignment"] == 1:
+                elif player.role["alignment"] == 1 or player.role["alignment"] == 2:
                     numTown += 1
 
         if numMafia >= numTown:
@@ -262,8 +262,6 @@ class GameManager(commands.Cog):
                         message += "```\n Good Luck!"
 
                     await player.textChannel.send(message)
-
-
 
                 message = "The Game Has Started"
                 await ctx.send(message)
