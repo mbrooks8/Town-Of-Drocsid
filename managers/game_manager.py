@@ -70,14 +70,8 @@ class GameManager(commands.Cog):
                 await self.move(self.bot)
 
             if self.phase == 2:
-                # Judgement: mute all players except the voted player
-                # and block everyone from posting in chat channel except the voted player
-
+                # Judgement
                 # TODO: call Vote function
-                
-                for member in self.characterManager.players:
-                    # todo: Mute all playyers except the voted plaayer
-                    await member.add_roles(self.roles["muted"])
 
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(10, 'Judgement Phase Has Started'))
@@ -131,7 +125,7 @@ class GameManager(commands.Cog):
     
     @commands.command()
     async def vote(self, ctx, *args):
-        """Lets Players Leave The Game."""
+        """Lets Players Vote For Something."""
         for player in self.characterManager.players:
             if player.member is ctx.message.author:
                 #player.vote = self.players[]
@@ -240,18 +234,17 @@ class GameManager(commands.Cog):
                     else:
                         channelName = str(player.member)
                         print("player", channelName)
-                        await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
+                        voice = await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
+                        text = await ctx.message.guild.create_text_channel(channelName, category=self.categories["Town Of Drocsid"])
+                        player.voiceChannel = voice
+                        player.textChannel = text
                         for channel in ctx.message.guild.channels:
                             if channel.name == channelName:
                                 await channel.set_permissions(player.member, read_messages=True)
                                 await channel.set_permissions(ctx.message.guild.default_role, read_messages=False)
 
-                
-                
-
                 print("Players in character manager:", str(self.characterManager.players))
                 for player in self.characterManager.players:
-
                     message = "Hello " + player.member.name + \
                               " Welcome to Town of Drocsid!\n" \
                               "The game has started. You have the role of:```"
@@ -268,7 +261,7 @@ class GameManager(commands.Cog):
                                 message += player.member.name
                         message += "```\n Good Luck!"
 
-                    await player.member.send(message)
+                    await player.textChannel.send(message)
 
 
 
