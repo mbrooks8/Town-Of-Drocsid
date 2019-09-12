@@ -36,14 +36,7 @@ class GameManager(commands.Cog):
             print("The current phase is:", self.phase)
 
             if self.phase == 0:
-                # Night: Lock chat channel and mute voice channel
-
-                # # Mute everyone
-                # for member in self.players:
-                #     # print("adding" + str(member) + "to muted discord role")
-                #     await member.add_roles(self.roles["muted"])
-
-                # move all the players to their respective channels:
+                # Night
                 # regular town people move to individual channels
                 for player in self.characterManager.players:
                     # mafia move to a group channel with all mafia members
@@ -68,9 +61,6 @@ class GameManager(commands.Cog):
             if self.phase == 1:
                 # Discussion: open voice channel unlock chat channel
                 # All players talk to eachother n do stuff
-                # for member in self.players:
-                #     # print(member)
-                #     await member.remove_roles(self.roles["muted"])
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
@@ -83,10 +73,9 @@ class GameManager(commands.Cog):
                 # and block everyone from posting in chat channel except the voted player
 
                 # TODO: call Vote function
-
+                
                 for member in self.characterManager.players:
-                    # todo: if the player is not the one that was voted for, mute them.
-                    # print(member)
+                    # todo: Mute all playyers except the voted plaayer
                     await member.add_roles(self.roles["muted"])
 
                 loop = asyncio.get_event_loop()
