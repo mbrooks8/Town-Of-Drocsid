@@ -82,16 +82,16 @@ class GameManager(commands.Cog):
                 # Judgement
                 # TODO: call Vote function
                 townVote = self.getElected()
-                print("The town killed ",townVote)
+                await self.channels["town-of-drocsid"].send("The town killed ", townVote)
                 # Judgement: mute all players except the voted player
                 # and block everyone from posting in chat channel except the voted player
 
                 # TODO: call Vote function
                 
-                for player in self.characterManager.players:
-                    member = player.member
-                    # todo: Mute all playyers except the voted plaayer
-                    await member.add_roles(self.roles["muted"])
+                # for player in self.characterManager.players:
+                #     member = player.member
+                #     # todo: Mute all playyers except the voted plaayer
+                #     await member.add_roles(self.roles["muted"])
 
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(10, 'Judgement Phase Has Started'))
@@ -107,15 +107,14 @@ class GameManager(commands.Cog):
                     self.started = False
 
                 await self.move(self.bot)
-        # else:
-        #     print("Game has not started")
+        else:
+            print("Game has not started")
 
     def check_game_end(self):
         """Check to see if the game should end. Returns something if it should end"""
         # End of game condiditons:
         # Mafia wins if there are numMafia >= numTown AND no other evil roles
         # Town wins if all evil roles have been killed
-        print(self.characterManager.players)
         numTown = 0
         numMafia = 0
         winner = None
@@ -136,7 +135,7 @@ class GameManager(commands.Cog):
         for player in self.characterManager.players:
             player.vote = -1
     
-    def getElected(self,role = None):
+    def getElected(self, role=None):
         elected = {}
         for player in self.characterManager.players:
             if role is not None:
@@ -146,7 +145,7 @@ class GameManager(commands.Cog):
             if key == "-1":
                 continue
             if key not in elected: 
-                elected.update({key:0})
+                elected.update({key: 0})
             elected[key] = elected[key] + 1
         if len(elected) == 0:
             print("nobody voted")
@@ -161,29 +160,7 @@ class GameManager(commands.Cog):
                 if player.alive == 1:
                     index = int(args[0])
                     player.vote = index
-                    print(str(player.member)," voted for ",self.characterManager.players[index].member)
-
-    @commands.command()
-    async def leave(self, ctx, *args):
-        """Lets Players Leave The Game."""
-        if ctx.message.author.name in self.characterManager.players:
-            message = ctx.message.author.name + "has left the game"
-            self.players.pop(ctx.message.author.name, None)
-            await ctx.send(message)
-        else:
-            await ctx.send("You are not part of this game.")
-
-    @commands.command()
-    async def players(self, ctx, *args):
-        """Lists the players."""
-        message = "```These are the players:\n"
-        for player in self.characterManager.players:
-            username = player.nick
-            if username is None:
-                username = player.name
-            message += username + "\n"
-        message += "```"
-        await ctx.send(message)
+                    print(str(player.member), " voted for ", self.characterManager.players[index].member)
 
     @commands.command()
     async def start(self, ctx, *args):
@@ -225,7 +202,7 @@ class GameManager(commands.Cog):
                 for channel in ctx.message.guild.channels:
                     self.channels[channel.name] = channel
 
-                print("These are the available channels:", self.channels)
+                # print("These are the available channels:", self.channels)
 
                 for guild in ctx.bot.guilds:
                     # get muted role
@@ -258,10 +235,6 @@ class GameManager(commands.Cog):
 
                 # Create indiviual channels for each player
                 for player in self.characterManager.players:
-                    if player.role["alignment"] == -1:
-                        # player is mafia, create a channel for all of the mafia members and let them be in there
-                        await mafiaChannel.set_permissions(player.member, read_messages=True)
-                    else:
                         channelName = str(player.member)
                         print("player", channelName)
                         voice = await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
@@ -273,6 +246,10 @@ class GameManager(commands.Cog):
                         await voice.set_permissions(ctx.message.guild.default_role, read_messages=False)
                         await text.set_permissions(player.member, read_messages=True)
                         await text.set_permissions(ctx.message.guild.default_role, read_messages=False)
+
+                if player.role["alignment"] == -1:
+                    # player is mafia, create a channel for all of the mafia members and let them be in there
+                    await mafiaChannel.set_permissions(player.member, read_messages=True)
 
                 print("Players in character manager:", str(self.characterManager.players))
                 for player in self.characterManager.players:
@@ -360,7 +337,27 @@ class GameManager(commands.Cog):
             print("Moving user to lobby")
             await member.move_to(lobby)
 
+    @commands.command()
+    async def leave(self, ctx, *args):
+        """Lets Players Leave The Game."""
+        if ctx.message.author.name in self.characterManager.players:
+            message = ctx.message.author.name + "has left the game"
+            self.players.pop(ctx.message.author.name, None)
+            await ctx.send(message)
+        else:
+            await ctx.send("You are not part of this game.")
 
+    @commands.command()
+    async def players(self, ctx, *args):
+        """Lists the players."""
+        message = "```These are the players:\n"
+        for player in self.characterManager.players:
+            username = player.nick
+            if username is None:
+                username = player.name
+            message += username + "\n"
+        message += "```"
+        await ctx.send(message)
 
 
 
