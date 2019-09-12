@@ -4,6 +4,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta
 import time
 import asyncio
+import operator
 
 
 class GameManager(commands.Cog):
@@ -128,6 +129,28 @@ class GameManager(commands.Cog):
             winner = "Town"
         return winner
 
+    def getElected(self):
+        elected = {}
+        for player in self.characterManager.players:
+            key = str(player.vote)
+            if key == "-1":
+                continue
+            if key not in elected: 
+                elected.update({key:0})
+            elected[key] = elected[key] + 1
+        return self.characterManager.players[int(max(elected.items(), key=operator.itemgetter(1))[0])]
+    
+    @commands.command()
+    async def vote(self, ctx, *args):
+        """Lets Players Leave The Game."""
+        for player in self.characterManager.players:
+            if player.member is ctx.message.author:
+                #player.vote = self.players[]
+                if player.alive == 1:
+                    index = int(args[0])
+                    player.vote = index
+                    print(str(player.member)," voted for ",self.characterManager.players[index].member)
+
     @commands.command()
     async def leave(self, ctx, *args):
         """Lets Players Leave The Game."""
@@ -175,6 +198,7 @@ class GameManager(commands.Cog):
 
                 for category in ctx.guild.categories:
                     if "Town Of Drocsid" in str(category):
+                        self.categories["Town Of Drocsid"] = category
                         makeCategory = False
                         break
 
