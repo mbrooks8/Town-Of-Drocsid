@@ -238,10 +238,11 @@ class GameManager(commands.Cog):
                         text = await ctx.message.guild.create_text_channel(channelName, category=self.categories["Town Of Drocsid"])
                         player.voiceChannel = voice
                         player.textChannel = text
-                        for channel in ctx.message.guild.channels:
-                            if channel.name == channelName:
-                                await channel.set_permissions(player.member, read_messages=True)
-                                await channel.set_permissions(ctx.message.guild.default_role, read_messages=False)
+
+                        await voice.set_permissions(player.member, read_messages=True)
+                        await voice.set_permissions(ctx.message.guild.default_role, read_messages=False)
+                        await text.set_permissions(player.member, read_messages=True)
+                        await text.set_permissions(ctx.message.guild.default_role, read_messages=False)
 
                 print("Players in character manager:", str(self.characterManager.players))
                 for player in self.characterManager.players:
