@@ -37,6 +37,7 @@ class GameManager(commands.Cog):
             print("The current phase is:", self.phase)
 
             if self.phase == 0:
+                self.clearVotes()
                 # Night
                 # regular town people move to individual channels
                 for player in self.characterManager.players:
@@ -60,6 +61,14 @@ class GameManager(commands.Cog):
                 await self.move(self.bot)
 
             if self.phase == 1:
+                mafiaVote = self.getElected("mafia")
+                doctorVote = self.getElected("doctor")
+                if mafiaVote is doctorVote:
+                    print("yay you saved them")
+                else:
+                    print("mafia killed", mafiaVote)
+                    print("doctor sucks, they saved ", doctorVote)
+                self.clearVotes()
                 # Discussion: open voice channel unlock chat channel
                 # All players talk to eachother n do stuff
 
@@ -72,6 +81,17 @@ class GameManager(commands.Cog):
             if self.phase == 2:
                 # Judgement
                 # TODO: call Vote function
+                townVote = self.getElected()
+                print("The town killed ",townVote)
+                # Judgement: mute all players except the voted player
+                # and block everyone from posting in chat channel except the voted player
+
+                # TODO: call Vote function
+                
+                for player in self.characterManager.players:
+                    member = player.member
+                    # todo: Mute all playyers except the voted plaayer
+                    await member.add_roles(self.roles["muted"])
 
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(10, 'Judgement Phase Has Started'))
@@ -112,15 +132,25 @@ class GameManager(commands.Cog):
             winner = "Town"
         return winner
 
-    def getElected(self):
+    def clearVotes(self):
+        for player in self.characterManager.players:
+            player.vote = -1
+    
+    def getElected(self,role = None):
         elected = {}
         for player in self.characterManager.players:
+            if role is not None:
+                if player.role["name"] != role:
+                    continue
             key = str(player.vote)
             if key == "-1":
                 continue
             if key not in elected: 
                 elected.update({key:0})
             elected[key] = elected[key] + 1
+        if len(elected) == 0:
+            print("nobody voted")
+            return None
         return self.characterManager.players[int(max(elected.items(), key=operator.itemgetter(1))[0])]
     
     @commands.command()
@@ -128,7 +158,6 @@ class GameManager(commands.Cog):
         """Lets Players Vote For Something."""
         for player in self.characterManager.players:
             if player.member is ctx.message.author:
-                #player.vote = self.players[]
                 if player.alive == 1:
                     index = int(args[0])
                     player.vote = index
@@ -161,6 +190,7 @@ class GameManager(commands.Cog):
         """Starts the game."""
         playerList = []
         gameChannel = "Town of Drocsid"
+        self.phase = 0
         channel = ctx.message.author.voice.channel
 
         if "lobby" in str(channel):

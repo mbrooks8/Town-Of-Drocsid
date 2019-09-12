@@ -5,6 +5,8 @@ class Character(object):
         self.alive = alive
         self.vote = vote
         self.will = ""
+        self.textChannel = ""
+        self.voiceChannel = ""
         self.visited = ""
 
     def setRole(self, role):
