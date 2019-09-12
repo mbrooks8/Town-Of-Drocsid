@@ -42,14 +42,7 @@ async def on_message(message):
         return
     global last_time
 
-    if message.content.lower() == "f":
-        if message.author.nick:
-            await message.channel.send(message.author.nick + " has paid respect.")
-        else:
-            await message.channel.send(message.author.name + " has paid respect.")
-
     log.info(f'[{message.channel.id} | {message.channel}] {message.author} - {message.content}')
-
     await bot.process_commands(message)
 
 
@@ -67,7 +60,6 @@ async def on_voice_state_update(member, begin, end):
                            "\n!helpRoles - Basic Role Descriptions" \
                            "\n```\n"
             await member.send(introMessage)
-
     except:
         pass
 
