@@ -30,7 +30,7 @@
       "abilities": "None",
       "attributes": "None",
       "goal": "Kill anyone who doesn't submit to Mafia."
-    }
+    },
     "sheriff": {
       "name":"sheriff",
       "alignment": 3,
