@@ -1,6 +1,6 @@
 # Town-Of-Drocsid
 
-Cool Bot for Town Of Salem
+Cool Bot for Town Of Drocsid
 
 ## Setup
 
