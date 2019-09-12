@@ -210,22 +210,12 @@ class GameManager(commands.Cog):
 
                 # print("These are the available channels:", self.channels)
 
+                # get all of the roles
                 for guild in ctx.bot.guilds:
-                    # get muted role
                     for role in guild.roles:
-                        # print(role)
-                        if "muted" in str(role):
-                            # print("found muted role")
-                            muted = role
-                            self.roles["muted"] = muted
-                            break
-                    break
+                        self.roles[str(role)] = role
 
-                await self.channels[gameChannel].set_permissions(muted,
-                                                                 connect=False,
-                                                                 speak=False,
-                                                                 mute_members=False,
-                                                                 deafen_members=False)
+                await self.channels[gameChannel].set_permissions(self.roles["muted"], connect=False, speak=False, mute_members=False, deafen_members=False)
 
                 # Move members to game channel
                 for member in lobby.members:
@@ -239,43 +229,11 @@ class GameManager(commands.Cog):
                 mafiaChannel = await ctx.message.guild.create_voice_channel("Mafia", category=self.categories["Town Of Drocsid"])
                 await mafiaChannel.set_permissions(ctx.message.guild.default_role, read_messages=False)
                 self.channels["Mafia"] = mafiaChannel
-                # Create indiviual channels for each player
+
+                # Create indiviual channels for each player and then send them a message about their roles
                 for player in self.characterManager.players:
-                        channelName = str(player.member)
-                        print("player", channelName)
-                        voice = await ctx.message.guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
-                        text = await ctx.message.guild.create_text_channel(channelName, category=self.categories["Town Of Drocsid"])
-                        player.voiceChannel = voice
-                        player.textChannel = text
-
-                        await voice.set_permissions(player.member, read_messages=True)
-                        await voice.set_permissions(ctx.message.guild.default_role, read_messages=False)
-                        await text.set_permissions(player.member, read_messages=True)
-                        await text.set_permissions(ctx.message.guild.default_role, read_messages=False)
-
-                if player.role["alignment"] == -1:
-                    # player is mafia, create a channel for all of the mafia members and let them be in there
-                    await mafiaChannel.set_permissions(player.member, read_messages=True)
-
-                print("Players in character manager:", str(self.characterManager.players))
-                for player in self.characterManager.players:
-                    message = "Hello " + player.member.name + \
-                              " Welcome to Town of Drocsid!\n" \
-                              "The game has started. You have the role of:```"
-                    message += "Name: " + str(player.role["name"]) + "\n\n"
-                    message += "Summary: " + str(player.role["summary"]) + "\n\n"
-                    message += "Goal: " + str(player.role["goal"]) + "\n\n"
-                    message += "Attributes: " + str(player.role["attributes"]) + "```\n"
-
-                    if player.role["alignment"] == -1:
-                        #player is a mafia, they need to know all the other mafia members
-                        message += "As a member of the mafia, your mafia mates are:\n```"
-                        for mafiaPlayer in self.characterManager.players:
-                            if mafiaPlayer.role["alignment"] == -1:
-                                message += mafiaPlayer.member.name + "\n"
-                        message += "```\n Good Luck!"
-
-                    await player.textChannel.send(message)
+                    self.createIndividualChannel(player, ctx.message.guild)
+                    self.sendGameStartMessage(player)
 
                 message = "The Game Has Started"
                 await self.channels["town-of-drocsid"].send(message)
@@ -284,6 +242,43 @@ class GameManager(commands.Cog):
             message = "You must be in the lobby to start the game"
             await ctx.send(message)
 
+    def createIndividualChannel(self, player, guild):
+        # TODO Need to create these channels in a different order or using less api calls.
+        channelName = str(player.member)
+        print("player", channelName)
+        voice = await guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
+        text = await guild.create_text_channel(channelName, category=self.categories["Town Of Drocsid"])
+        player.voiceChannel = voice
+        player.textChannel = text
+
+        await voice.set_permissions(player.member, read_messages=True)
+        await voice.set_permissions(guild.default_role, read_messages=False)
+        await text.set_permissions(player.member, read_messages=True)
+        await text.set_permissions(guild.default_role, read_messages=False)
+
+        if player.role["alignment"] == -1:
+            # player is mafia, create a channel for all of the mafia members and let them be in there
+            await self.channels["Mafia"].set_permissions(player.member, read_messages=True)
+
+    def sendGameStartMessage(self, player):
+        message = "Hello " + player.member.name + \
+                  " Welcome to Town of Drocsid!\n" \
+                  "The game has started. You have the role of:```"
+        message += "Name: " + str(player.role["name"]) + "\n\n"
+        message += "Summary: " + str(player.role["summary"]) + "\n\n"
+        message += "Goal: " + str(player.role["goal"]) + "\n\n"
+        message += "Attributes: " + str(player.role["attributes"]) + "```\n"
+
+        if player.role["alignment"] == -1:
+            # player is a mafia, they need to know all the other mafia members
+            #TODO not all mafia members are not displayed here for some reason.
+            message += "As a member of the mafia, your mafia mates are:\n```"
+            for mafiaPlayer in self.characterManager.players:
+                if mafiaPlayer.role["alignment"] == -1:
+                    message += mafiaPlayer.member.name + "\n"
+            message += "```\n Good Luck!"
+
+        await player.textChannel.send(message)
 
     @commands.command()
     async def end(self, ctx, *args):
