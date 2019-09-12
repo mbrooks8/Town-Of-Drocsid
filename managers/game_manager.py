@@ -42,21 +42,22 @@ class GameManager(commands.Cog):
                 # regular town people move to individual channels
                 for player in self.characterManager.players:
                     # mafia move to a group channel with all mafia members
-                    if player.role["attributes"] == -1:
+                    if player.role["alignment"] == -1:
+                        print(self.channels)
                         await player.member.move_to(self.channels["Mafia"])
                     else:
                         await player.member.move_to(player.voiceChannel)
 
                     # doctor is given a list of people to heal, doctor picks one
                     if player.role["name"] == "doctor":
-                        await player.voiceChannel.send("Temp Doctor Message")
+                        await player.textChannel.send("Temp Doctor Message")
 
                     # detective is given a list of people to investigate, detective picks one and their role is revealed
                     if player.role["name"] == "detective":
-                        await player.voiceChannel.send("Temp Detective Message")
+                        await player.textChannel.send("Temp Detective Message")
 
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(30, 'Night Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, 'Night Phase Has Started'))
                 await task1
                 await self.move(self.bot)
 
@@ -72,12 +73,18 @@ class GameManager(commands.Cog):
                 # Discussion: open voice channel unlock chat channel
                 # All players talk to eachother n do stuff
                 # move all players back to main channel
-                for player in self.characterManager.players:
-                    await player.member.move_to(self.channels["Town Of Drocsid"])
+
+                # print("Trying to move players to main channel")
+                # for player in self.characterManager.players:
+                #     print("Moving")
+                #     try:
+                #         await player.member.move_to(self.channels["Town Of Drocsid"])
+                #     except:
+                #         pass
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(50, 'Discussion Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, 'Discussion Phase Has Started'))
                 await task1
                 await self.move(self.bot)
 
@@ -231,7 +238,7 @@ class GameManager(commands.Cog):
                 # Create channel for Mafia:
                 mafiaChannel = await ctx.message.guild.create_voice_channel("Mafia", category=self.categories["Town Of Drocsid"])
                 await mafiaChannel.set_permissions(ctx.message.guild.default_role, read_messages=False)
-
+                self.channels["Mafia"] = mafiaChannel
                 # Create indiviual channels for each player
                 for player in self.characterManager.players:
                         channelName = str(player.member)
