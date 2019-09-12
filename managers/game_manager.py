@@ -42,21 +42,21 @@ class GameManager(commands.Cog):
                 # regular town people move to individual channels
                 for player in self.characterManager.players:
                     # mafia move to a group channel with all mafia members
-                    if player.role["attribute"] == -1:
+                    if player.role["attributes"] == -1:
                         await player.member.move_to(self.channels["Mafia"])
                     else:
-                        await player.member.move_to(self.channels[player.member.name])
+                        await player.member.move_to(player.voiceChannel)
 
                     # doctor is given a list of people to heal, doctor picks one
                     if player.role["name"] == "doctor":
-                        print("Do a doctor thing")
+                        await player.voiceChannel.send("Temp Doctor Message")
 
                     # detective is given a list of people to investigate, detective picks one and their role is revealed
                     if player.role["name"] == "detective":
-                        print("Do a detective thing")
+                        await player.voiceChannel.send("Temp Detective Message")
 
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(10, 'Night Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(30, 'Night Phase Has Started'))
                 await task1
                 await self.move(self.bot)
 
@@ -71,10 +71,13 @@ class GameManager(commands.Cog):
                 self.clearVotes()
                 # Discussion: open voice channel unlock chat channel
                 # All players talk to eachother n do stuff
+                # move all players back to main channel
+                for player in self.characterManager.players:
+                    await player.member.move_to(self.channels["Town Of Drocsid"])
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(10, 'Discussion Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(50, 'Discussion Phase Has Started'))
                 await task1
                 await self.move(self.bot)
 
@@ -82,19 +85,15 @@ class GameManager(commands.Cog):
                 # Judgement
                 # TODO: call Vote function
                 townVote = self.getElected()
-                await self.channels["town-of-drocsid"].send("The town killed ", townVote)
+                messaage = "The town killed ", townVote
+                await self.channels["town-of-drocsid"].send(messaage)
                 # Judgement: mute all players except the voted player
                 # and block everyone from posting in chat channel except the voted player
 
                 # TODO: call Vote function
-                
-                # for player in self.characterManager.players:
-                #     member = player.member
-                #     # todo: Mute all playyers except the voted plaayer
-                #     await member.add_roles(self.roles["muted"])
 
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(10, 'Judgement Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(5, 'Judgement Phase Has Started'))
                 await task1
 
                 end = self.check_game_end()
@@ -272,7 +271,7 @@ class GameManager(commands.Cog):
                     await player.textChannel.send(message)
 
                 message = "The Game Has Started"
-                await ctx.send(message)
+                await self.channels["town-of-drocsid"].send(message)
                 await self.move(self.bot)
         else:
             message = "You must be in the lobby to start the game"
