@@ -15,7 +15,6 @@ class GameManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.started = False
-        self.players = []
         self.characterManager = character_manager.CharaterManager()
         self.phase = 0
         self.client = discord.Client()
@@ -69,9 +68,9 @@ class GameManager(commands.Cog):
             if self.phase == 1:
                 # Discussion: open voice channel unlock chat channel
                 # All players talk to eachother n do stuff
-                for member in self.players:
-                    # print(member)
-                    await member.remove_roles(self.roles["muted"])
+                # for member in self.players:
+                #     # print(member)
+                #     await member.remove_roles(self.roles["muted"])
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
@@ -82,7 +81,10 @@ class GameManager(commands.Cog):
             if self.phase == 2:
                 # Judgement: mute all players except the voted player
                 # and block everyone from posting in chat channel except the voted player
-                for member in self.players:
+
+                # TODO: call Vote function
+
+                for member in self.characterManager.players:
                     # todo: if the player is not the one that was voted for, mute them.
                     # print(member)
                     await member.add_roles(self.roles["muted"])
@@ -93,8 +95,8 @@ class GameManager(commands.Cog):
 
                 end = self.check_game_end()
                 if end is not None:
-                    #The game is over
-                    #Send end game messaage to channel
+                    # The game is over
+                    # Send end game messaage to channel
                     message = "The game has ended and " + end + " has won!"
                     await self.channels["town-of-drocsid"].send(message)
                     #Set the game to end
@@ -126,22 +128,10 @@ class GameManager(commands.Cog):
             winner = "Town"
         return winner
 
-
-    # @commands.command()
-    # async def vote(self, ctx, user):
-    #     """Lets Players Leave The Game."""
-    #     if ctx.message.author.name in self.players:
-    #         message = ctx.message.author.name + "has left the game"
-    #         self.players.pop(ctx.message.author.name, None)
-    #         await ctx.send(message)
-    #     else:
-    #         await ctx.send("You are not part of this game.")
-
-
     @commands.command()
     async def leave(self, ctx, *args):
         """Lets Players Leave The Game."""
-        if ctx.message.author.name in self.players:
+        if ctx.message.author.name in self.characterManager.players:
             message = ctx.message.author.name + "has left the game"
             self.players.pop(ctx.message.author.name, None)
             await ctx.send(message)
@@ -152,7 +142,7 @@ class GameManager(commands.Cog):
     async def players(self, ctx, *args):
         """Lists the players."""
         message = "```These are the players:\n"
-        for player in self.players:
+        for player in self.characterManager.players:
             username = player.nick
             if username is None:
                 username = player.name
@@ -163,7 +153,7 @@ class GameManager(commands.Cog):
     @commands.command()
     async def start(self, ctx, *args):
         """Starts the game."""
-        self.players = []
+        playerList = []
         gameChannel = "Town of Drocsid"
         channel = ctx.message.author.voice.channel
 
@@ -219,11 +209,11 @@ class GameManager(commands.Cog):
 
                 # Move members to game channel
                 for member in lobby.members:
-                    self.players.append(member)
+                    playerList.append(member)
                     await member.move_to(self.channels[gameChannel])
 
                 # Assign game roles to each person in the game
-                self.characterManager.initCharacters(self.players)
+                self.characterManager.initCharacters(playerList)
 
                 # Create channel for Mafia:
                 mafiaChannel = await ctx.message.guild.create_voice_channel("Mafia", category=self.categories["Town Of Drocsid"])
