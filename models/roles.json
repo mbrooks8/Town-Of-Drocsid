@@ -1,5 +1,5 @@
 {
-    "Civilian": {
+    "civilian": {
       "name":"Civilian",
       "alignment": 1,
       "summary": "Your a fuckin townie",
@@ -7,7 +7,7 @@
       "attributes": "None",
       "goal": "Lynch every criminal and evildoer."
     },
-    "Doctor": {
+    "doctor": {
       "name":"Doctor",
       "alignment": 2,
       "summary": "A surgeon skilled in trauma care who secretly heals people.",
@@ -15,7 +15,7 @@
       "attributes": "You may only Heal yourself once.\nYou will know if your target is attacked.\nHealing will give a Powerful Defense.",
       "goal": "Lynch every criminal and evildoer."
     },
-    "Detective": {
+    "detective": {
       "name":"Detective",
       "alignment": 2,
       "summary": "A private eye who secretly gathers information.",
@@ -23,7 +23,7 @@
       "attributes": "None",
       "goal": "Lynch every criminal and evildoer."
     },
-    "Mafia": {
+    "mafia": {
       "name":"Mafia",
       "alignment": -1,
       "summary": "A bad guy",
@@ -31,7 +31,7 @@
       "attributes": "None",
       "goal": "Kill anyone who doesn't submit to Mafia."
     }
-    "Sheriff": {
+    "sheriff": {
       "name":"Sheriff",
       "alignment": 3,
       "summary": "Jail someone during the day, and interview their night doings",
