@@ -264,9 +264,9 @@ class GameManager(commands.Cog):
                     if player.role["alignment"] == -1:
                         #player is a mafia, they need to know all the other mafia members
                         message += "As a member of the mafia, your mafia mates are:\n```"
-                        for player in self.characterManager.players:
-                            if player.role["alignment"] == -1:
-                                message += player.member.name
+                        for mafiaPlayer in self.characterManager.players:
+                            if mafiaPlayer.role["alignment"] == -1:
+                                message += mafiaPlayer.member.name + "\n"
                         message += "```\n Good Luck!"
 
                     await player.textChannel.send(message)
