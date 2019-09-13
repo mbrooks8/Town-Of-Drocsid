@@ -84,7 +84,7 @@ async def helpRoles(ctx):
 @commands.command()
 async def helpGame(ctx):
     """Moves everyone to channel."""
-    message = "```Town of Salem is a browser-based game that challenges players on their ability to convincingly lie as well as detect when other players are lying. The game ranges from 7 to 15 players. These players are randomly divided into alignments - Town, Mafia, and Neutrals. If you are a Town member (the good guys) you must track down the Mafia and other villains before they kill you. The catch? You don't know who is a Town member and who is a villain. If you are an evil role, such as a Serial Killer, you secretly murder Town members in the veil of night and try to avoid getting caught.```"
+    message = "```Town of Drocsid is a browser-based game that challenges players on their ability to convincingly lie as well as detect when other players are lying. The game ranges from 7 to 15 players. These players are randomly divided into alignments - Town, Mafia, and Neutrals. If you are a Town member (the good guys) you must track down the Mafia and other villains before they kill you. The catch? You don't know who is a Town member and who is a villain. If you are an evil role, such as a Serial Killer, you secretly murder Town members in the veil of night and try to avoid getting caught.```"
     await ctx.message.author.send(message)
 
 def setup():
