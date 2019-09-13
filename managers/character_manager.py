@@ -23,7 +23,7 @@ class CharaterManager():
         mafiaCount = round(count/4)
         detectiveCount = 1
         doctorCount = 1
-        #update roles to store a usable Role class
+        # update roles to store a usable Role class
         roles["civilian"]["count"] = civilianCount
         roles["mafia"]["count"] = mafiaCount
         roles["doctor"]["count"] = doctorCount
@@ -36,7 +36,6 @@ class CharaterManager():
         if roles is []:
             return False
         for member in memberList:
-            print(memberList)
             sample = random.sample(roles.keys(), k=1)
             # print(sample)
             key = sample[0]
@@ -48,12 +47,5 @@ class CharaterManager():
             role = 0
             # todo update key to be the role
 
-        # for player in self.players:
-        #     print(player)
-            
-        if len(memberList) % 4 == 0:
-            print("the ideal size")
-        else:
-            print("you can still play, but the 3:1 ratio is off")
         return True
     

@@ -245,7 +245,6 @@ class GameManager(commands.Cog):
     async def createIndividualChannel(self, player, guild):
         # TODO Need to create these channels in a different order or using less api calls.
         channelName = str(player.member)
-        print("player", channelName)
         voice = await guild.create_voice_channel(channelName, category=self.categories["Town Of Drocsid"])
         text = await guild.create_text_channel(channelName, category=self.categories["Town Of Drocsid"])
         player.voiceChannel = voice
@@ -271,8 +270,7 @@ class GameManager(commands.Cog):
 
         if player.role["alignment"] == -1:
             # player is a mafia, they need to know all the other mafia members
-            #TODO not all mafia members are not displayed here for some reason.
-            message += "As a member of the mafia, your mafia mates are:\n```"
+            message += "As a member of the mafia, your mafia mates are:\n```\n"
             for mafiaPlayer in self.characterManager.players:
                 if mafiaPlayer.role["alignment"] == -1:
                     message += mafiaPlayer.member.name + "\n"
