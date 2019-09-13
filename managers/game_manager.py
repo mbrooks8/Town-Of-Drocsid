@@ -306,7 +306,7 @@ class GameManager(commands.Cog):
                 if "Town Of Drocsid" in str(category):
                     #print(category)
                     await category.delete()
-            message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
+            message = "The Game Has Been Forcefully Stopped by " + ctx.message.author.name
             await ctx.send(message)
         else:
             await ctx.send("You have to send this message in the lobby")
