@@ -29,6 +29,7 @@ class GameManager(commands.Cog):
         self.channels = {}
         self.categories = {}
         self.lobby = {}
+        self.firstTurn = True
 
     async def start_timer(self, delay, what):
         """Starts a await sleep timer. Lets you do run a function and let other people still send commands"""
@@ -69,22 +70,23 @@ class GameManager(commands.Cog):
 
             if self.phase == 1:
                 # Discussion:
-                mafiaVote = self.characterManager.getElected("mafia")
-                doctorVote = self.characterManager.getElected("doctor")
-                if mafiaVote is doctorVote:
-                    print("yay you saved them")
-                else:
-                    print("mafia killed", mafiaVote)
-                    print("doctor sucks, they saved ", doctorVote)
-                self.characterManager.clearVotes()
+                if self.firstTurn is not True:
+                    mafiaVote = self.characterManager.getElected("mafia")
+                    doctorVote = self.characterManager.getElected("doctor")
+                    if mafiaVote is doctorVote:
+                        print("yay you saved them")
+                    else:
+                        print("mafia killed", mafiaVote)
+                        print("doctor sucks, they saved ", doctorVote)
+                    self.characterManager.clearVotes()
 
-                print("Trying to move players to main channel")
-                for player in self.characterManager.players:
-                    print("Moving", player.member.name)
-                    try:
-                        await player.member.move_to(self.channels["Town Of Drocsid"])
-                    except Exception as e:
-                        print(e)
+                    print("Trying to move players to main channel")
+                    for player in self.characterManager.players:
+                        print("Moving", player.member.name)
+                        try:
+                            await player.member.move_to(self.channels["Town Of Drocsid"])
+                        except Exception as e:
+                            print(e)
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
@@ -94,28 +96,29 @@ class GameManager(commands.Cog):
 
             if self.phase == 2:
                 # Judgement
-                # TODO: call Vote function
-                townVote = self.characterManager.getElected()
-                messaage = "The town killed ", townVote
-                await self.channels["town-of-drocsid"].send(messaage)
-                # Judgement: mute all players except the voted player
-                # and block everyone from posting in chat channel except the voted player
+                if self.firstTurn is not True:
+                    # TODO: call Vote function
+                    townVote = self.characterManager.getElected()
+                    messaage = "The town killed ", townVote
+                    await self.channels["town-of-drocsid"].send(messaage)
+                    # Judgement: mute all players except the voted player
+                    # and block everyone from posting in chat channel except the voted player
 
-                # TODO: call Vote function
+                    # TODO: call Vote function
 
-                loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(5, 'Judgement Phase Has Started'))
-                await task1
+                    loop = asyncio.get_event_loop()
+                    task1 = loop.create_task(self.start_timer(5, 'Judgement Phase Has Started'))
+                    await task1
 
-                end = self.check_game_end()
-                if end is not None:
-                    # The game is over
-                    # Send end game messaage to channel
-                    message = "The game has ended and " + end + " has won!"
-                    await self.channels["town-of-drocsid"].send(message)
-                    #Set the game to end
-                    self.started = False
-
+                    end = self.check_game_end()
+                    if end is not None:
+                        # The game is over
+                        # Send end game messaage to channel
+                        message = "The game has ended and " + end + " has won!"
+                        await self.channels["town-of-drocsid"].send(message)
+                        #Set the game to end
+                        self.started = False
+                self.firstTurn = False
                 await self.move(self.bot)
         else:
             print("Game has not started")
