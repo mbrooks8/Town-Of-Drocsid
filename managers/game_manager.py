@@ -266,82 +266,98 @@ class GameManager(commands.Cog):
     @commands.command()
     async def end(self, ctx, *args):
         """Forces the game to end."""
-        self.started = False
-        channelList = []
+        channel = ctx.message.author.voice.channel
+        if "lobby" in str(channel):
+            self.started = False
+            channelList = []
 
-        # gets the lobby
-        for channel in ctx.guild.channels:
-            if "lobby" in str(channel):
-                lobby = channel
-                break
+            # gets the lobby
+            for channel in ctx.guild.channels:
+                if "lobby" in str(channel):
+                    lobby = channel
+                    break
 
-        # Gets all game created channels
-        for channel in ctx.guild.channels:
-            try:
-                if str(channel.category) == "Town Of Drocsid":
-                    channelList.append(channel)
-            except:
-                pass
+            # Gets all game created channels
+            for channel in ctx.guild.channels:
+                try:
+                    if str(channel.category) == "Town Of Drocsid":
+                        channelList.append(channel)
+                except:
+                    pass
 
-        # moves all users to the lobby
-        for member in ctx.guild.members:
-            if member.voice is not None:
-                print("Moving user to lobby")
-                await member.move_to(lobby)
+            # moves all users to the lobby
+            for member in ctx.guild.members:
+                if member.voice is not None:
+                    print("Moving user to lobby")
+                    await member.move_to(lobby)
 
-        # deletes game channels
-        for channel in channelList:
-            await channel.delete()
-            
-        #delete player specific channels
-        for player in self.characterManager.players:
-            channelName = str(player.member)
-            for channel in ctx.message.guild.channels:
-                if channel.name == channelName:
-                    await channel.delete()
+            # deletes game channels
+            for channel in channelList:
+                await channel.delete()
 
-        #Removes all made categories
-        for category in ctx.guild.categories:
-            if "Town Of Drocsid" in str(category):
-                #print(category)
-                await category.delete()
-        message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
-        await ctx.send(message)
+            #delete player specific channels
+            for player in self.characterManager.players:
+                channelName = str(player.member)
+                for channel in ctx.message.guild.channels:
+                    if channel.name == channelName:
+                        await channel.delete()
+
+            #Removes all made categories
+            for category in ctx.guild.categories:
+                if "Town Of Drocsid" in str(category):
+                    #print(category)
+                    await category.delete()
+            message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
+            await ctx.send(message)
+        else:
+            ctx.message.author.send("You have to send this message in the lobby")
 
 
     @commands.command()
     async def moveAll(self, ctx, *args):
         """Moves everyone to channel."""
-        for channel in ctx.guild.channels:
-            if "lobby" in str(channel):
-                lobby = channel
-                break
-        print(ctx.guild.members)
-        for member in ctx.guild.members:
-            print("Moving user to lobby")
-            await member.move_to(lobby)
+        channel = ctx.message.author.voice.channel
+        if "lobby" in str(channel):
+            for channel in ctx.guild.channels:
+                if "lobby" in str(channel):
+                    lobby = channel
+                    break
+            print(ctx.guild.members)
+            for member in ctx.guild.members:
+                print("Moving user to lobby")
+                await member.move_to(lobby)
+        else:
+            ctx.message.author.send("You have to send this message in the lobby")
 
     @commands.command()
     async def leave(self, ctx, *args):
         """Lets Players Leave The Game."""
-        if ctx.message.author.name in self.characterManager.players:
-            message = ctx.message.author.name + "has left the game"
-            self.players.pop(ctx.message.author.name, None)
-            await ctx.send(message)
+        channel = ctx.message.author.voice.channel
+        if "town-of-drocsid" in str(channel):
+            if ctx.message.author.name in self.characterManager.players:
+                message = ctx.message.author.name + "has left the game"
+                self.players.pop(ctx.message.author.name, None)
+                await ctx.send(message)
+            else:
+                await ctx.send("You are not part of this game.")
         else:
-            await ctx.send("You are not part of this game.")
+            ctx.message.author.send("You have to send this message in town-of-drocsid")
 
     @commands.command()
     async def players(self, ctx, *args):
         """Lists the players."""
-        message = "```These are the players:\n"
-        for player in self.characterManager.players:
-            username = player.nick
-            if username is None:
-                username = player.name
-            message += username + "\n"
-        message += "```"
-        await ctx.send(message)
+        channel = ctx.message.author.voice.channel
+        if "town-of-drocsid" in str(channel):
+            message = "```These are the players:\n"
+            for player in self.characterManager.players:
+                username = player.nick
+                if username is None:
+                    username = player.name
+                message += username + "\n"
+            message += "```"
+            await ctx.send(message)
+        else:
+            ctx.message.author.send("You have to send this message in town-of-drocsid")
 
 
 
