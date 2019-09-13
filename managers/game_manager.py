@@ -1,18 +1,15 @@
 import discord
 from managers import character_manager 
 from discord.ext import commands
-from datetime import datetime, timedelta
-import time
 import asyncio
-import operator
-
-
 
 phases = {
-    "night":0,
-    "discussion":1,
-    "night":2,
+    "night": 0,
+    "discussion": 1,
+    "night": 2,
 }
+
+
 class GameManager(commands.Cog):
     """Manages the game."""
     # Phases of the game are:
@@ -221,8 +218,10 @@ class GameManager(commands.Cog):
                 # Move members to game channel
                 for member in lobby.members:
                     playerList.append(member)
-                    await self.channels["gameVoiceChannel"].join()
+
                     # TODO: Have the bot join the main channel
+                    # await self.channels["gameVoiceChannel"].connect()
+
                     await member.move_to(self.channels["gameVoiceChannel"])
 
                 # Assign game roles to each person in the game
