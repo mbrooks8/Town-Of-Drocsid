@@ -64,7 +64,7 @@ class GameManager(commands.Cog):
                         await player.textChannel.send("Temp Detective Message")
 
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(10, 'Night Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, '```\n🌃 🌃 Night Phase Has Started 🌃 🌃\n```'))
                 await task1
                 await self.move(self.bot)
 
@@ -90,7 +90,7 @@ class GameManager(commands.Cog):
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(10, 'Discussion Phase Has Started'))
+                task1 = loop.create_task(self.start_timer(10, '\n 👯 👯 Discussion Phase Has Started 👯 👯\n'))
                 await task1
                 await self.move(self.bot)
 
@@ -107,7 +107,7 @@ class GameManager(commands.Cog):
                     # TODO: call Vote function
 
                     loop = asyncio.get_event_loop()
-                    task1 = loop.create_task(self.start_timer(5, 'Judgement Phase Has Started'))
+                    task1 = loop.create_task(self.start_timer(5, '\n 👮 👮 Judgement Phase Has Started 👮 👮\n'))
                     await task1
 
                     end = self.check_game_end()
