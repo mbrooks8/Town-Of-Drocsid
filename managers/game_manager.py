@@ -44,7 +44,7 @@ class GameManager(commands.Cog):
         if self.gameIsRunning is True:
             self.phase = (self.phase + 1) % 3
             print("The current phase is:", self.phase)
-
+            voteMessage = self.characterManager.getVoteList()
             if self.phase == 0:
                 self.characterManager.clearVotes()
                 # Night
@@ -53,17 +53,22 @@ class GameManager(commands.Cog):
                     # mafia move to a group channel with all mafia members
                     if player.role["alignment"] == -1:
                         print(self.channels)
+                        message = "its time to kill someone... vote for them\n"
+                        await player.textChannel.send(message+voteMessage)
                         await player.member.move_to(self.channels["Mafia"])
                     else:
                         await player.member.move_to(player.voiceChannel)
 
                     # doctor is given a list of people to heal, doctor picks one
-                    if player.role["name"] == "doctor":
-                        await player.textChannel.send("Temp Doctor Message")
+                    if player.role["name"] == "Doctor":
+                        message = "its time to save someone... vote for them\n"
+                        await player.textChannel.send(message+voteMessage)
 
                     # detective is given a list of people to investigate, detective picks one and their role is revealed
-                    if player.role["name"] == "detective":
-                        await player.textChannel.send("Temp Detective Message")
+                    if player.role["name"] == "Detective":
+                        message = "its time to investigate someone... vote for them\n"
+                        await player.textChannel.send(message+voteMessage)
+
 
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(20, '```\n🌃 🌃 Night Phase Has Started 🌃 🌃\n```'))
@@ -73,13 +78,24 @@ class GameManager(commands.Cog):
             if self.phase == 1:
                 # Discussion:
                 if self.firstTurn is not True:
-                    mafiaVote = self.characterManager.getElected("mafia")
-                    doctorVote = self.characterManager.getElected("doctor")
-                    if mafiaVote is doctorVote:
-                        print("yay you saved them")
-                    else:
-                        print("mafia killed", mafiaVote)
-                        print("doctor sucks, they saved ", doctorVote)
+                    mafiaVote = self.characterManager.getElected("Mafia")
+                    doctorVote = self.characterManager.getElected("Doctor")
+                    detectiveVote = self.characterManager.getElected("Detective")
+                    if detectiveVote != None: 
+                        for player in self.characterManager.players:
+                            if player.role["name"] == "Detective":
+                                message = "they are a "+detectiveVote.role["name"]+"\n"
+                                await player.textChannel.send(message+voteMessage)
+                    if mafiaVote != None:
+                        if mafiaVote is doctorVote:
+                            await self.channels["town-of-drocsid"].send("Doctor has saved "+str(mafiaVote.member))
+                        else:
+                            message = "Mafia has killed "+str(mafiaVote.member)
+                            if doctorVote != None:
+                                message += ", and the doctor sucks... they tried to save "+ str(doctorVote.member)
+                            await self.channels["town-of-drocsid"].send(message)
+                            print("mafia killed", mafiaVote)
+                            print("doctor sucks, they saved ", doctorVote)
                     self.characterManager.clearVotes()
 
                     print("Trying to move players to main channel")
@@ -89,7 +105,6 @@ class GameManager(commands.Cog):
                             await player.member.move_to(self.channels["gameVoiceChannel"])
                         except Exception as e:
                             print(e)
-
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
                 task1 = loop.create_task(self.start_timer(10, '\n 👯 👯 Discussion Phase Has Started 👯 👯\n'))
@@ -101,6 +116,8 @@ class GameManager(commands.Cog):
                 if self.firstTurn is not True:
                     # TODO: call Vote function
                     townVote = self.characterManager.getElected()
+                    if townVote != None:
+                        townVote.kill()
                     messaage = "The town killed ", townVote
                     await self.channels["gameTextChannel"].send(messaage)
                     # Judgement: mute all players except the voted player
@@ -130,7 +147,7 @@ class GameManager(commands.Cog):
         numMafia = 0
         winner = None
         for player in self.characterManager.players:
-            if player.alive == 1:
+            if player.isAlive():
                 if player.role["alignment"] == -1:
                     numMafia += 1
                 elif player.role["alignment"] == 1 or player.role["alignment"] == 2:
@@ -150,6 +167,7 @@ class GameManager(commands.Cog):
                 if player.isAlive:
                     index = int(args[0])
                     player.vote = index
+                    await player.textChannel.send("you voted for: "+str(self.characterManager.players[index].member) )
                     print(str(player.member), " voted for ", self.characterManager.players[index].member)
 
     @commands.command()
