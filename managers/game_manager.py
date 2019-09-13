@@ -88,7 +88,9 @@ class GameManager(commands.Cog):
                         if mafiaVote is doctorVote:
                             await self.channels["town-of-drocsid"].send("Doctor has saved "+str(mafiaVote.member))
                         else:
-                            message = "Mafia has killed "+str(mafiaVote.member)+", and the doctor sucks... they tried to save "+ str(doctorVote.member)
+                            message = "Mafia has killed "+str(mafiaVote.member)
+                            if doctorVote != None:
+                                message += ", and the doctor sucks... they tried to save "+ str(doctorVote.member)
                             await self.channels["town-of-drocsid"].send(message)
                             print("mafia killed", mafiaVote)
                             print("doctor sucks, they saved ", doctorVote)
@@ -163,6 +165,7 @@ class GameManager(commands.Cog):
                 if player.isAlive:
                     index = int(args[0])
                     player.vote = index
+                    await player.textChannel.send("you voted for: "+str(self.characterManager.players[index].member) )
                     print(str(player.member), " voted for ", self.characterManager.players[index].member)
 
     @commands.command()
