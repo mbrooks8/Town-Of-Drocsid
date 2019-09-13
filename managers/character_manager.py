@@ -35,6 +35,14 @@ class CharaterManager():
         for player in self.players:
             player.vote = -1
 
+    def getVoteList(self):
+        message = ""
+        for i in range(0,len(self.players)):
+            message += str(i)+": "+str(self.players[i].member)+"\n"
+            print(i)
+            print(self.players[i].member.nick,self.players[i].member)
+        print(message)
+        return message
     def getElected(self, role=None):
         elected = {}
         for player in self.players:

@@ -13,6 +13,9 @@ class Character(object):
     def isAlive(self):
         return (self.alive == 1)
     
+    def kill(self):
+        self.alive = 0
+
     def setRole(self, role):
         self.role = role
 
