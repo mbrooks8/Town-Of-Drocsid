@@ -10,7 +10,7 @@
     "doctor": {
       "name":"Doctor",
       "alignment": 2,
-      "summary": "A surgeon skilled in trauma care who secretly heals people.",
+      "summary": "\uD83D\uDC89\uD83D\uDC89 A surgeon skilled in trauma care who secretly heals people.",
       "abilities": "Heal one person each night, preventing them from dying.",
       "attributes": "You may only heal yourself once.\nYou will know if your target is attacked.\nHealing will give a powerful defense.",
       "goal": "Lynch every criminal and evildoer."
@@ -18,7 +18,7 @@
     "detective": {
       "name":"Detective",
       "alignment": 2,
-      "summary": "A private eye who secretly gathers information.",
+      "summary": "\uD83D\uDC6E\uD83D\uDC6EA private eye who secretly gathers information.",
       "abilities": "Investigate one person each night for a clue to their role.",
       "attributes": "None",
       "goal": "Lynch every criminal and evildoer."
@@ -26,9 +26,9 @@
     "mafia": {
       "name":"Mafia",
       "alignment": -1,
-      "summary": "A bad guy.",
+      "summary": "\uD83D\uDC73\uD83D\uDC73A bad guy.",
       "abilities": "None",
       "attributes": "None",
-      "goal": "Kill anyone who doesn't submit to Mafia."
+      "goal": " Kill anyone who doesn't submit to Mafia."
     }
 }

@@ -34,7 +34,7 @@ class GameManager(commands.Cog):
     async def start_timer(self, delay, what):
         """Starts a await sleep timer. Lets you do run a function and let other people still send commands"""
         if self.gameIsRunning is True:
-            await self.channels["town-of-drocsid"].send(what)
+            await self.channels["gameTextChannel"].send(what)
             await asyncio.sleep(delay)
 
     async def move(self, ctx):
@@ -84,7 +84,7 @@ class GameManager(commands.Cog):
                     for player in self.characterManager.players:
                         print("Moving", player.member.name)
                         try:
-                            await player.member.move_to(self.channels["Town Of Drocsid"])
+                            await player.member.move_to(self.channels["gameVoiceChannel"])
                         except Exception as e:
                             print(e)
 
@@ -100,7 +100,7 @@ class GameManager(commands.Cog):
                     # TODO: call Vote function
                     townVote = self.characterManager.getElected()
                     messaage = "The town killed ", townVote
-                    await self.channels["town-of-drocsid"].send(messaage)
+                    await self.channels["gameTextChannel"].send(messaage)
                     # Judgement: mute all players except the voted player
                     # and block everyone from posting in chat channel except the voted player
 
@@ -110,12 +110,12 @@ class GameManager(commands.Cog):
                     task1 = loop.create_task(self.start_timer(5, '\n 👮 👮 Judgement Phase Has Started 👮 👮\n'))
                     await task1
 
-                    end = self.check_game_end()
-                    if end is not None:
+                    winner = self.check_game_end()
+                    if winner is not None:
                         # The game is over
                         # Send end game messaage to channel
-                        message = "The game has ended and " + end + " has won!"
-                        await self.channels["town-of-drocsid"].send(message)
+                        message = "🎆 🎆 🎆 The game has ended and " + winner + " has won 🎆 🎆 🎆!"
+                        await self.channels["gameTextChannel"].send(message)
                         self.gameIsRunning = False
                 self.firstTurn = False
                 await self.move(self.bot)
@@ -187,11 +187,10 @@ class GameManager(commands.Cog):
                     self.categories["Town Of Drocsid"] = await ctx.guild.create_category_channel("Town Of Drocsid")
 
                 if makeChannel is True:
-                    await ctx.message.guild.create_voice_channel(gameChannel, category=self.categories["Town Of Drocsid"])
-                    await ctx.message.guild.create_text_channel("town-of-drocsid", category=self.categories["Town Of Drocsid"])
-
-                for channel in ctx.message.guild.channels:
-                    self.channels[channel.name] = channel
+                    mainGameChannel = await ctx.message.guild.create_voice_channel(gameChannel, category=self.categories["Town Of Drocsid"])
+                    self.channels["gameVoiceChannel"] = mainGameChannel
+                    mainTextChannel = await ctx.message.guild.create_text_channel("town-of-drocsid", category=self.categories["Town Of Drocsid"])
+                    self.channels["gameTextChannel"] = mainTextChannel
 
                 # print("These are the available channels:", self.channels)
 
@@ -200,12 +199,12 @@ class GameManager(commands.Cog):
                     for role in guild.roles:
                         self.roles[str(role)] = role
 
-                await self.channels[gameChannel].set_permissions(self.roles["muted"], connect=False, speak=False, mute_members=False, deafen_members=False)
+                await self.channels["gameVoiceChannel"].set_permissions(self.roles["muted"], connect=False, speak=False, mute_members=False, deafen_members=False)
 
                 # Move members to game channel
                 for member in lobby.members:
                     playerList.append(member)
-                    await member.move_to(self.channels[gameChannel])
+                    await member.move_to(self.channels["gameVoiceChannel"])
 
                 # Assign game roles to each person in the game
                 self.characterManager.initCharacters(playerList)
@@ -224,7 +223,7 @@ class GameManager(commands.Cog):
                     await self.sendGameStartMessage(player)
 
                 message = "The Game Has Started"
-                await self.channels["town-of-drocsid"].send(message)
+                await self.channels["gameTextChannel"].send(message)
                 await self.move(self.bot)
         else:
             message = "You must be in the lobby to start the game"
