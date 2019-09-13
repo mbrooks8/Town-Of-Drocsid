@@ -21,7 +21,7 @@ class GameManager(commands.Cog):
     # Judgement -- 2
     def __init__(self, bot):
         self.bot = bot
-        self.started = False
+        self.gameIsRunning = False
         self.characterManager = character_manager.CharaterManager()
         self.phase = 0
         self.client = discord.Client()
@@ -33,13 +33,13 @@ class GameManager(commands.Cog):
 
     async def start_timer(self, delay, what):
         """Starts a await sleep timer. Lets you do run a function and let other people still send commands"""
-        if self.started is True:
+        if self.gameIsRunning is True:
             await self.channels["town-of-drocsid"].send(what)
             await asyncio.sleep(delay)
 
     async def move(self, ctx):
         """Moves the phase of the game to the next phase."""
-        if self.started is True:
+        if self.gameIsRunning is True:
             self.phase = (self.phase + 1) % 3
             print("The current phase is:", self.phase)
 
@@ -116,8 +116,7 @@ class GameManager(commands.Cog):
                         # Send end game messaage to channel
                         message = "The game has ended and " + end + " has won!"
                         await self.channels["town-of-drocsid"].send(message)
-                        #Set the game to end
-                        self.started = False
+                        self.gameIsRunning = False
                 self.firstTurn = False
                 await self.move(self.bot)
         else:
@@ -169,7 +168,7 @@ class GameManager(commands.Cog):
                 await ctx.send(message)
 
             else:
-                self.started = True
+                self.gameIsRunning = True
                 makeChannel = True
                 makeCategory = True
 
@@ -272,7 +271,7 @@ class GameManager(commands.Cog):
         """Forces the game to end."""
         channel = ctx.message.channel
         if "lobby" in str(channel):
-            self.started = False
+            self.gameIsRunning = False
             channelList = []
 
             # gets the lobby
