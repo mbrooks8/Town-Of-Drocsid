@@ -124,9 +124,6 @@ class GameManager(commands.Cog):
 
     def check_game_end(self):
         """Check to see if the game should end. Returns something if it should end"""
-        # End of game condiditons:
-        # Mafia wins if there are numMafia >= numTown AND no other evil roles
-        # Town wins if all evil roles have been killed
         numTown = 0
         numMafia = 0
         winner = None
@@ -352,10 +349,7 @@ class GameManager(commands.Cog):
         if "town-of-drocsid" in str(channel):
             message = "```These are the players:\n"
             for player in self.characterManager.players:
-                username = player.nick
-                if username is None:
-                    username = player.name
-                message += username + "\n"
+                message += player.member.name + "\n"
             message += "```"
             await ctx.send(message)
         else:

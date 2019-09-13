@@ -29,10 +29,16 @@ Once the command is sent, the game will automatically start and roles will be as
 
 The phases of the game are:
 
-        Night: Lock chat channel and mute voice channel
-        Discussion: open voice channel unlock chat channel
-        Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
+    Night: Lock chat channel and mute voice channel
+    Discussion: open voice channel unlock chat channel
+    Judgement: mute all players except the voted player and block everyone from posting in chat channel except the voted player
         
+### end Game Conditions
+
+    End of game condiditons:
+    Mafia wins if there are numMafia >= numTown AND no other evil roles
+    Town wins if all evil roles have been killed
+    
 ## Contributing
 Everything should work. If everything works then commit directly to master =)
 
