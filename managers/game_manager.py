@@ -232,8 +232,8 @@ class GameManager(commands.Cog):
 
                 # Create indiviual channels for each player and then send them a message about their roles
                 for player in self.characterManager.players:
-                    self.createIndividualChannel(player, ctx.message.guild)
-                    self.sendGameStartMessage(player)
+                    await self.createIndividualChannel(player, ctx.message.guild)
+                    await self.sendGameStartMessage(player)
 
                 message = "The Game Has Started"
                 await self.channels["town-of-drocsid"].send(message)
@@ -242,7 +242,7 @@ class GameManager(commands.Cog):
             message = "You must be in the lobby to start the game"
             await ctx.send(message)
 
-    def createIndividualChannel(self, player, guild):
+    async def createIndividualChannel(self, player, guild):
         # TODO Need to create these channels in a different order or using less api calls.
         channelName = str(player.member)
         print("player", channelName)
@@ -260,7 +260,7 @@ class GameManager(commands.Cog):
             # player is mafia, create a channel for all of the mafia members and let them be in there
             await self.channels["Mafia"].set_permissions(player.member, read_messages=True)
 
-    def sendGameStartMessage(self, player):
+    async def sendGameStartMessage(self, player):
         message = "Hello " + player.member.name + \
                   " Welcome to Town of Drocsid!\n" \
                   "The game has started. You have the role of:```"
