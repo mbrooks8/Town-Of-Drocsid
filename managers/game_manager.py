@@ -35,7 +35,9 @@ class GameManager(commands.Cog):
         """Starts a await sleep timer. Lets you do run a function and let other people still send commands"""
         if self.gameIsRunning is True:
             await self.channels["gameTextChannel"].send(what)
-            await asyncio.sleep(delay)
+            await asyncio.sleep(delay - 5)
+            await self.channels["gameTextChannel"].send("Phase is ending in 5 seconds")
+            await asyncio.sleep(5)
 
     async def move(self, ctx):
         """Moves the phase of the game to the next phase."""
@@ -64,7 +66,7 @@ class GameManager(commands.Cog):
                         await player.textChannel.send("Temp Detective Message")
 
                 loop = asyncio.get_event_loop()
-                task1 = loop.create_task(self.start_timer(10, '```\n🌃 🌃 Night Phase Has Started 🌃 🌃\n```'))
+                task1 = loop.create_task(self.start_timer(20, '```\n🌃 🌃 Night Phase Has Started 🌃 🌃\n```'))
                 await task1
                 await self.move(self.bot)
 
@@ -201,6 +203,8 @@ class GameManager(commands.Cog):
                 # Move members to game channel
                 for member in lobby.members:
                     playerList.append(member)
+                    await self.channels["gameVoiceChannel"].join()
+                    # TODO: Have the bot join the main channel
                     await member.move_to(self.channels["gameVoiceChannel"])
 
                 # Assign game roles to each person in the game
