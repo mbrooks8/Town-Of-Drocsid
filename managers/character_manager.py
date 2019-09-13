@@ -35,7 +35,7 @@ class CharaterManager():
         for player in self.players:
             player.vote = -1
 
-    def getElected(self,role = None):
+    def getElected(self, role=None):
         elected = {}
         for player in self.players:
             if role is not None:

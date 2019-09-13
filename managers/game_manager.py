@@ -68,6 +68,7 @@ class GameManager(commands.Cog):
                 await self.move(self.bot)
 
             if self.phase == 1:
+                # Discussion:
                 mafiaVote = self.characterManager.getElected("mafia")
                 doctorVote = self.characterManager.getElected("doctor")
                 if mafiaVote is doctorVote:
@@ -76,17 +77,14 @@ class GameManager(commands.Cog):
                     print("mafia killed", mafiaVote)
                     print("doctor sucks, they saved ", doctorVote)
                 self.characterManager.clearVotes()
-                # Discussion: open voice channel unlock chat channel
-                # All players talk to eachother n do stuff
-                # move all players back to main channel
 
-                # print("Trying to move players to main channel")
-                # for player in self.characterManager.players:
-                #     print("Moving")
-                #     try:
-                #         await player.member.move_to(self.channels["Town Of Drocsid"])
-                #     except:
-                #         pass
+                print("Trying to move players to main channel")
+                for player in self.characterManager.players:
+                    print("Moving", player.member.name)
+                    try:
+                        await player.member.move_to(self.channels["Town Of Drocsid"])
+                    except Exception as e:
+                        print(e)
 
                 # day lasts for 45 seconds
                 loop = asyncio.get_event_loop()
@@ -212,8 +210,11 @@ class GameManager(commands.Cog):
 
                 # Create channel for Mafia:
                 mafiaChannel = await ctx.message.guild.create_voice_channel("Mafia", category=self.categories["Town Of Drocsid"])
+                mafiaText = await ctx.message.guild.create_voice_channel("MafiaText", category=self.categories["Town Of Drocsid"])
                 await mafiaChannel.set_permissions(ctx.message.guild.default_role, read_messages=False)
+                await mafiaText.set_permissions(ctx.message.guild.default_role, read_messages=False)
                 self.channels["Mafia"] = mafiaChannel
+                self.channels["MafiaText"] = mafiaChannel
 
                 # Create indiviual channels for each player and then send them a message about their roles
                 for player in self.characterManager.players:
@@ -243,6 +244,7 @@ class GameManager(commands.Cog):
         if player.role["alignment"] == -1:
             # player is mafia, create a channel for all of the mafia members and let them be in there
             await self.channels["Mafia"].set_permissions(player.member, read_messages=True)
+            await self.channels["MafiaText"].set_permissions(player.member, read_messages=True)
 
     async def sendGameStartMessage(self, player):
         message = "Hello " + player.member.name + \
@@ -260,13 +262,12 @@ class GameManager(commands.Cog):
                 if mafiaPlayer.role["alignment"] == -1:
                     message += mafiaPlayer.member.name + "\n"
             message += "```\n Good Luck!"
-
         await player.textChannel.send(message)
 
     @commands.command()
     async def end(self, ctx, *args):
         """Forces the game to end."""
-        channel = ctx.message.author.voice.channel
+        channel = ctx.message.channel
         if "lobby" in str(channel):
             self.started = False
             channelList = []
@@ -310,13 +311,13 @@ class GameManager(commands.Cog):
             message = "The Game Has Been Forcefully Stopped by" + ctx.message.author.name
             await ctx.send(message)
         else:
-            ctx.message.author.send("You have to send this message in the lobby")
+            await ctx.send("You have to send this message in the lobby")
 
 
     @commands.command()
     async def moveAll(self, ctx, *args):
         """Moves everyone to channel."""
-        channel = ctx.message.author.voice.channel
+        channel = ctx.message.channel
         if "lobby" in str(channel):
             for channel in ctx.guild.channels:
                 if "lobby" in str(channel):
@@ -327,12 +328,12 @@ class GameManager(commands.Cog):
                 print("Moving user to lobby")
                 await member.move_to(lobby)
         else:
-            ctx.message.author.send("You have to send this message in the lobby")
+            await ctx.send("You have to send this message in the lobby")
 
     @commands.command()
     async def leave(self, ctx, *args):
         """Lets Players Leave The Game."""
-        channel = ctx.message.author.voice.channel
+        channel = ctx.message.channel
         if "town-of-drocsid" in str(channel):
             if ctx.message.author.name in self.characterManager.players:
                 message = ctx.message.author.name + "has left the game"
@@ -341,12 +342,12 @@ class GameManager(commands.Cog):
             else:
                 await ctx.send("You are not part of this game.")
         else:
-            ctx.message.author.send("You have to send this message in town-of-drocsid")
+            await ctx.send("You have to send this message in town-of-drocsid")
 
     @commands.command()
     async def players(self, ctx, *args):
         """Lists the players."""
-        channel = ctx.message.author.voice.channel
+        channel = ctx.message.channel
         if "town-of-drocsid" in str(channel):
             message = "```These are the players:\n"
             for player in self.characterManager.players:
@@ -357,7 +358,7 @@ class GameManager(commands.Cog):
             message += "```"
             await ctx.send(message)
         else:
-            ctx.message.author.send("You have to send this message in town-of-drocsid")
+            ctx.send("You have to send this message in town-of-drocsid")
 
 
 
