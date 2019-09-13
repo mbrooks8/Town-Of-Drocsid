@@ -9,6 +9,10 @@ class Character(object):
         self.voiceChannel = ""
         self.visited = ""
 
+
+    def isAlive(self):
+        return (self.alive == 1)
+    
     def setRole(self, role):
         self.role = role
 

@@ -3,6 +3,7 @@ from models import Character
 from models import Role
 import random
 import json
+import operator
 log = logging.getLogger('tod')
 
 
@@ -29,6 +30,27 @@ class CharaterManager():
         roles["doctor"]["count"] = doctorCount
         roles["detective"]["count"] = detectiveCount
         return roles
+
+    def clearVotes(self):
+        for player in self.players:
+            player.vote = -1
+
+    def getElected(self,role = None):
+        elected = {}
+        for player in self.players:
+            if role is not None:
+                if player.role["name"] != role:
+                    continue
+            key = str(player.vote)
+            if key == "-1":
+                continue
+            if key not in elected: 
+                elected.update({key: 0})
+            elected[key] = elected[key] + 1
+        if len(elected) == 0:
+            print("nobody voted")
+            return None
+        return self.players[int(max(elected.items(), key=operator.itemgetter(1))[0])]
     
     def initCharacters(self, memberList):
         self.players = []
@@ -48,4 +70,3 @@ class CharaterManager():
             # todo update key to be the role
 
         return True
-    

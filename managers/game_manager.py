@@ -7,6 +7,12 @@ import asyncio
 import operator
 
 
+
+phases = {
+    "night":0,
+    "discussion":1,
+    "night":2,
+}
 class GameManager(commands.Cog):
     """Manages the game."""
     # Phases of the game are:
@@ -37,7 +43,7 @@ class GameManager(commands.Cog):
             print("The current phase is:", self.phase)
 
             if self.phase == 0:
-                self.clearVotes()
+                self.characterManager.clearVotes()
                 # Night
                 # regular town people move to individual channels
                 for player in self.characterManager.players:
@@ -62,14 +68,14 @@ class GameManager(commands.Cog):
                 await self.move(self.bot)
 
             if self.phase == 1:
-                mafiaVote = self.getElected("mafia")
-                doctorVote = self.getElected("doctor")
+                mafiaVote = self.characterManager.getElected("mafia")
+                doctorVote = self.characterManager.getElected("doctor")
                 if mafiaVote is doctorVote:
                     print("yay you saved them")
                 else:
                     print("mafia killed", mafiaVote)
                     print("doctor sucks, they saved ", doctorVote)
-                self.clearVotes()
+                self.characterManager.clearVotes()
                 # Discussion: open voice channel unlock chat channel
                 # All players talk to eachother n do stuff
                 # move all players back to main channel
@@ -91,7 +97,7 @@ class GameManager(commands.Cog):
             if self.phase == 2:
                 # Judgement
                 # TODO: call Vote function
-                townVote = self.getElected()
+                townVote = self.characterManager.getElected()
                 messaage = "The town killed ", townVote
                 await self.channels["town-of-drocsid"].send(messaage)
                 # Judgement: mute all players except the voted player
@@ -136,34 +142,13 @@ class GameManager(commands.Cog):
         if numMafia == 0:
             winner = "Town"
         return winner
-
-    def clearVotes(self):
-        for player in self.characterManager.players:
-            player.vote = -1
-    
-    def getElected(self, role=None):
-        elected = {}
-        for player in self.characterManager.players:
-            if role is not None:
-                if player.role["name"] != role:
-                    continue
-            key = str(player.vote)
-            if key == "-1":
-                continue
-            if key not in elected: 
-                elected.update({key: 0})
-            elected[key] = elected[key] + 1
-        if len(elected) == 0:
-            print("nobody voted")
-            return None
-        return self.characterManager.players[int(max(elected.items(), key=operator.itemgetter(1))[0])]
     
     @commands.command()
     async def vote(self, ctx, *args):
         """Lets Players Vote For Something."""
         for player in self.characterManager.players:
-            if player.member is ctx.message.author:
-                if player.alive == 1:
+            if str(player.member) == str(ctx.message.author):
+                if player.isAlive:
                     index = int(args[0])
                     player.vote = index
                     print(str(player.member), " voted for ", self.characterManager.players[index].member)
